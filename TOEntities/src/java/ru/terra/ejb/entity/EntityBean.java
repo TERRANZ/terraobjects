@@ -48,6 +48,9 @@ public class EntityBean implements EntityBeanRemote {
 	return TOObjectsManager.getInstance().getPropertyValue(oid, propId);
     }
 
-
-
+    @Override
+    public void setPropertyValue(Integer oid, Integer propid, Object value)
+    {
+	TOObjectsManager.getInstance().setPropertyValue(oid, propid, value);
+    }
 }

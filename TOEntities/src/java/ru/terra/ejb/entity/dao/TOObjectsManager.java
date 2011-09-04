@@ -104,7 +104,7 @@ public class TOObjectsManager
 	}
 
 	createDefaultPropsForObject(templateId, added);
-
+	newobj.setObjectId(added);
 	return newobj;
     }
 
@@ -180,20 +180,56 @@ public class TOObjectsManager
 	    case 1:
 	    {
 		ret = objprop.getStringVal();
-	    }break;
+	    }
+	    break;
 	    case 2:
 	    {
 		ret = objprop.getIntVal();
-	    }break;
+	    }
+	    break;
 	    case 3:
 	    {
 		ret = objprop.getFloatVal();
-	    }break;
+	    }
+	    break;
 	    case 4:
 	    {
 		ret = objprop.getTextVal();
-	    }break;
+	    }
+	    break;
 	}
 	return ret;
+    }
+
+    //ставит значение в object_props нужному объекту
+    public void setPropertyValue(Integer oid, Integer propid, Object value)
+    {
+	TOObjectProperty property = getObjectProperty(oid, propid);
+	TOProperty prop = persist.read(TOProperty.class,
+		DAOConsts.SELECT_PROPERTY_BY_ID, property.getPropertyId());
+	switch (prop.getPropTypeId())
+	{
+	    case 1:
+	    {
+		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	    case 2:
+	    {
+		property.setIntVal(Integer.valueOf(String.valueOf(value)));
+	    }
+	    break;
+	    case 3:
+	    {
+		property.setFloatVal(Float.valueOf(String.valueOf(value)));
+	    }
+	    break;
+	    case 4:
+	    {
+		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	}
+	persist.update(property);
     }
 }

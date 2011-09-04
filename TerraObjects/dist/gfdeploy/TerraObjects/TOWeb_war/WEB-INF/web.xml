@@ -4,9 +4,17 @@
         <servlet-name>TOObjectsServlet</servlet-name>
         <servlet-class>ru.terra.web.servlets.TOObjectsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StorageServlet</servlet-name>
+        <servlet-class>ru.terra.web.servlets.StorageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>TOObjectsServlet</servlet-name>
         <url-pattern>/objects</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StorageServlet</servlet-name>
+        <url-pattern>/storage</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

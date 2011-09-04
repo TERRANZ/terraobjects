@@ -21,4 +21,6 @@ public interface EntityBeanRemote {
     TOObjectProperty getProperty(Integer oid, Integer propId);
 
     Object getPropertyValue(Integer oid, Integer propId);
+
+    void setPropertyValue(Integer oid, Integer propid, Object value);
 }

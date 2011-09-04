@@ -21,8 +21,8 @@ public interface DAOConsts {
     public final String SELECT_OBJECT_TEMPLATE_BY_ID = "select * from object_template where "
 	    + "object_template_id = ?";
     public final String SELECT_OBJECT_PROPS_BY_OBJECT_ID = "select * from object_props where object_id = ?";
-    public final String SELECT_OBJECT_PROPS_BY_OBJECT_ID_AND_PROP_ID = 
-	    "select * from object_props where object_id = ? AND object_props_id = ?";
+    public final String SELECT_OBJECT_PROPS_BY_OBJECT_ID_AND_PROP_ID =
+	    "select * from object_props where object_id = ? AND prop_id = ?";
     public final String SELECT_ALL_OBJECT_PROPS = "select * from object_props";
     public final String SELECT_OBJECT_PROPS_BY_PROP_ID = "select * from object_props where prop_id = ?";
 }
