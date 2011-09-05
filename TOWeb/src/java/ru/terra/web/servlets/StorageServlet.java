@@ -12,7 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ru.terra.ejb.entity.EntityBeanRemote;
+import ru.terra.solution.ejb.HashscanBean;
+import ru.terra.solution.ejb.HashscanBeanRemote;
 
 /**
  *
@@ -20,7 +21,8 @@ import ru.terra.ejb.entity.EntityBeanRemote;
  */
 public class StorageServlet extends HttpServlet {
     @EJB
-    private EntityBeanRemote entityBean;
+    private HashscanBeanRemote hashscanBean;
+
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -37,30 +39,12 @@ public class StorageServlet extends HttpServlet {
         try {
             if (request.getParameter("do") != null)
 	    {
-		storeHash(request.getParameter("name"), request.getParameter("hash"));
+		hashscanBean.start();
 	    }
         } finally { 
             out.close();
         }
     } 
-
-    private void storeObject()
-    {
-
-    }
-
-    private void storeHash(String name,String hash)
-    {
-	Integer newobjId = entityBean.createNewObjectByTemplate(2);
-	entityBean.setPropertyValue(newobjId, 1, name);
-	entityBean.setPropertyValue(newobjId, 3, hash);
-    }
-
-    private void loadObject()
-    {
-
-    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.

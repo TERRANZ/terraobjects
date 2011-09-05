@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `object_props` (
   `prop_id` int(11) NOT NULL,
   `intval` int(11) DEFAULT NULL,
   `floatval` float DEFAULT NULL,
-  `strval` varchar(100) DEFAULT NULL,
+  `strval` varchar(256) DEFAULT NULL,
   `textval` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`object_props_id`,`object_id`,`prop_id`),
   KEY `R_1` (`object_id`),
