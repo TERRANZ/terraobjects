@@ -68,6 +68,7 @@ public class TOObjectsServlet extends HttpServlet {
 	for (TOObjectProperty p : props)
 	{
 	    out.print(entityBean.getPropertyValue(oid, p.getPropertyId()));
+	    out.print(" ");
 	}
     }
 
