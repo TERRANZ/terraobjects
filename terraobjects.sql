@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.4deb1
+-- version 3.4.5deb1
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Сен 04 2011 г., 19:46
+-- Время создания: Сен 20 2011 г., 02:28
 -- Версия сервера: 5.1.58
--- Версия PHP: 5.3.8-1
+-- Версия PHP: 5.3.8-2
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -66,14 +66,15 @@ CREATE TABLE IF NOT EXISTS `object_template` (
   `Object_Template_Name` varchar(20) DEFAULT NULL,
   `parent_object_template_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`object_template_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=3 ;
 
 --
 -- Дамп данных таблицы `object_template`
 --
 
 INSERT INTO `object_template` (`object_template_id`, `Object_Template_Name`, `parent_object_template_id`) VALUES
-(1, 'Пользователь', NULL);
+(1, 'Пользователь', NULL),
+(2, 'Хэш', NULL);
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `object_template_props` (
   PRIMARY KEY (`object_template_props_id`),
   KEY `R_18` (`object_template_id`),
   KEY `R_19` (`prop_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=7 ;
 
 --
 -- Дамп данных таблицы `object_template_props`
@@ -96,7 +97,9 @@ CREATE TABLE IF NOT EXISTS `object_template_props` (
 
 INSERT INTO `object_template_props` (`object_template_id`, `prop_id`, `object_template_props_id`) VALUES
 (1, 1, 1),
-(1, 2, 3);
+(1, 2, 3),
+(2, 1, 5),
+(2, 3, 6);
 
 -- --------------------------------------------------------
 
@@ -118,7 +121,8 @@ CREATE TABLE IF NOT EXISTS `property` (
 
 INSERT INTO `property` (`prop_id`, `prop_type_id`, `prop_defvalue`) VALUES
 (1, 1, 'Имя'),
-(2, 1, 'Фамилия');
+(2, 1, 'Фамилия'),
+(3, 1, 'хэш');
 
 -- --------------------------------------------------------
 
