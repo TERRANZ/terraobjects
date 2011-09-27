@@ -26,7 +26,7 @@ public class Main
 	    Class.forName(driverName);
 
 	    // Create a connection to the database
-	    String serverName = "192.168.1.3";
+	    String serverName = "localhost";
 	    String mydatabase = "terraobjects";
 	    String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
 	    String username = "scan";

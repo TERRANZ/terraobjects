@@ -19,6 +19,7 @@ import ru.terraobject.entity.TOObjectProperty;
 import ru.terraobject.entity.TOObjectTemplate;
 import ru.terraobject.entity.TOObjectTemplateProperty;
 import ru.terraobject.entity.TOProperty;
+import ru.terraobject.entity.TOPropertyType;
 
 public class TOObjectsManager
 {
@@ -46,6 +47,11 @@ public class TOObjectsManager
     public List getAllObjects()
     {
 	return persist.readList(TOObject.class, DAOConsts.SELECT_ALL_OBJECTS);
+    }
+
+    public List getAllObjectsByTemplateId(Integer templateId)
+    {
+	return persist.readList(TOObject.class, DAOConsts.SELECT_OBJECTS_BY_TEMPLATE_ID,templateId);
     }
 
     public TOObject getObject(Integer id)
@@ -130,22 +136,22 @@ public class TOObjectsManager
 	    }
 	    switch (prop.getPropTypeId())
 	    {
-		case 1: //String
+		case TOPropertyType.TYPE_STR: //String
 		{
 		    newprop.setStringVal(prop.getPropDefValue());
 		}
 		break;
-		case 2: //Int
+		case TOPropertyType.TYPE_INT: //Int
 		{
 		    newprop.setIntVal(Integer.valueOf(prop.getPropDefValue()));
 		}
 		break;
-		case 3: //Float
+		case TOPropertyType.TYPE_FLOAT: //Float
 		{
 		    newprop.setFloatVal(Float.valueOf(prop.getPropDefValue()));
 		}
 		break;
-		case 4: //Text
+		case TOPropertyType.TYPE_TEXT: //Text
 		{
 		    newprop.setStringVal(prop.getPropDefValue());
 		}
@@ -168,12 +174,12 @@ public class TOObjectsManager
     {
 	TOObjectProperty objprop = getObjectProperty(oid, pid);
 	TOProperty prop = EntityCache.getInstance().getPropertyFromCache(objprop.getPropertyId());
-	    if (prop == null)
-	    {
-		System.out.println("property not found in cache, loading");
-		prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, objprop.getPropertyId());
-		EntityCache.getInstance().addPropertyToCache(objprop.getPropertyId(), prop);
-	    }
+	if (prop == null)
+	{
+	    System.out.println("property not found in cache, loading");
+	    prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, objprop.getPropertyId());
+	    EntityCache.getInstance().addPropertyToCache(objprop.getPropertyId(), prop);
+	}
 	Object ret = new Object();
 	switch (prop.getPropTypeId())
 	{
@@ -236,5 +242,24 @@ public class TOObjectsManager
 	    break;
 	}
 	persist.update(property);
+    }
+
+    public Integer getObjectsCountByTemplateId(Integer templateId)
+    {
+	try
+	{
+	    PreparedStatement st = conn.prepareStatement(DAOConsts.SELECT_OBJECTS_COUNT_BY_TEMPLATE_ID);
+	    st.setInt(1, templateId);
+	    st.execute();
+	    ResultSet rs = st.getGeneratedKeys();
+	    if (rs.last())
+	    {
+		return rs.getInt(1);
+	    }
+	} catch (SQLException ex)
+	{
+	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return 0;
     }
 }

@@ -7,6 +7,8 @@ package ru.terraobject.entity.dao;
 public interface DAOConsts {
     public final String SELECT_ALL_OBJECTS = "select * from object";
     public final String SELECT_OBJECT_BY_ID = "select * from object where object_id = ?";
+    public final String SELECT_OBJECTS_BY_TEMPLATE_ID = "select * from object where object_template_id = ?";
+    public final String SELECT_OBJECTS_COUNT_BY_TEMPLATE_ID = "select COUNT(object_template_id) from object where object_template_id = ?";
     public final String SELECT_ALL_PROP_TYPES = "select * from prop_type";
     public final String SELECT_PROP_TYPE_BY_ID = "select * from prop_type where prop_type_id = ?";
     public final String SELECT_PROP_TYPE_BY_NAME = "select * from prop_type where prop_type_name like '%?%'";

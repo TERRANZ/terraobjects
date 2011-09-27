@@ -7,6 +7,10 @@ package ru.terraobject.entity;
 public class TOPropertyType
 {
 
+    public static final int TYPE_STR = 1;
+    public static final int TYPE_INT = 2;
+    public static final int TYPE_FLOAT = 3;
+    public static final int TYPE_TEXT = 4;
     private Integer PropTypeId;
     private String PropTypeName;
 
