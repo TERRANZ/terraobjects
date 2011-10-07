@@ -1,8 +1,8 @@
 package ru.terraobjects.solutions;
 
-import java.net.Socket;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.sql.Connection;
-
 
 /**
  *
@@ -10,9 +10,12 @@ import java.sql.Connection;
  */
 public interface Solution
 {
+
     public Integer getPort();
+
     public String getName();
-    public void go();
-    public void stop();
-    public void setConnection(Connection c);
+
+    public boolean parseInput();
+
+    public void setParams(Connection c, DataInputStream in, DataOutputStream out);
 }
