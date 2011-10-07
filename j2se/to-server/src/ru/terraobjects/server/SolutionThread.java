@@ -43,6 +43,7 @@ public class SolutionThread implements Runnable
         } catch (IOException ex)
         {
             Logger.getLogger(SolutionThread.class.getName()).log(Level.SEVERE, null, ex);
+	    return;
         }
 
     }

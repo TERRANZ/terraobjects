@@ -24,7 +24,7 @@ public class Main
         {
             
             int serverPort = 12345; // здесь обязательно нужно указать порт к которому привязывается сервер.
-            String address = "127.0.0.1"; // это IP-адрес компьютера, где исполняется наша серверная программа.
+            String address = "192.168.1.3"; // это IP-адрес компьютера, где исполняется наша серверная программа.
             InetAddress ipAddress = InetAddress.getByName(address); // создаем объект который отображает вышеописанный IP-адрес.
             System.out.println("Any of you heard of a socket with IP address " + address + " and port " + serverPort + "?");
             Socket socket = new Socket(ipAddress, serverPort); // создаем сокет используя IP-адрес и порт сервера.
@@ -60,6 +60,7 @@ public class Main
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+		out.writeInt(0);
             } else
             {
                 if ("read".equals(args[0]))
