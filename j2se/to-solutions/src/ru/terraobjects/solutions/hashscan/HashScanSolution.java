@@ -17,7 +17,7 @@ public class HashScanSolution implements Solution
 
     private Integer port = 12345;
     private Socket socket;
-    private ServerThread st;
+    private HSServerThread st;
     private Thread t;
     private Connection conn;
     private Boolean stop = false;
@@ -44,7 +44,7 @@ public class HashScanSolution implements Solution
 	    while (!stop)
 	    {
 		socket = server.accept();
-		st = new ServerThread(socket, conn);
+		st = new HSServerThread(socket, conn);
 		t = new Thread(st);
 		t.start();
 	    }

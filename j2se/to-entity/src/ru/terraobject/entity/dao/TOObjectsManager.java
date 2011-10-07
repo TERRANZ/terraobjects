@@ -251,7 +251,7 @@ public class TOObjectsManager
 	    PreparedStatement st = conn.prepareStatement(DAOConsts.SELECT_OBJECTS_COUNT_BY_TEMPLATE_ID);
 	    st.setInt(1, templateId);
 	    st.execute();
-	    ResultSet rs = st.getGeneratedKeys();
+	    ResultSet rs = st.getResultSet();
 	    if (rs.last())
 	    {
 		return rs.getInt(1);

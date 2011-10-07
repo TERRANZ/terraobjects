@@ -4,14 +4,8 @@ package ru.terraobject.entity.dao;
  *
  * @author terranz
  */
-import java.sql.SQLException;
 import java.util.List;
 import java.sql.Connection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 
 import net.sf.persist.*;
 import ru.terraobject.entity.TOObjectProperty;
@@ -69,6 +63,7 @@ public class TOPropertiesManager
 
     public TOObjectProperty getObjectProperty(Integer oId, Integer propId)
     {
-	return persist.read(TOObjectProperty.class, DAOConsts.SELECT_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID, oId, propId);
+	TOObjectProperty res = persist.read(TOObjectProperty.class, DAOConsts.SELECT_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID, oId, propId);
+	return res;
     }
 }
