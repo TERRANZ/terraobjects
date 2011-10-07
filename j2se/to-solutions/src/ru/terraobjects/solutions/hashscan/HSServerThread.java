@@ -88,14 +88,8 @@ public class HSServerThread implements Runnable
 			    {
 				String name = TOPropertiesManager.getInstance().getObjectProperty(obj.getObjectId(), 1).getStringVal();
 				String hash = TOPropertiesManager.getInstance().getObjectProperty(obj.getObjectId(), 3).getStringVal();
-				int nameSize = name.length();
-				int hashSize = hash.length();
-				out.writeInt(nameSize);
-				System.out.println("Send name size = "+String.valueOf(nameSize));
-				out.write(name.getBytes());
-				out.writeInt(hashSize);
-				System.out.println("Send hash size = "+String.valueOf(hashSize));
-				out.write(hash.getBytes());
+				out.writeUTF(name);
+				out.writeUTF(hash);
 				out.flush();
 			    }
 			}
