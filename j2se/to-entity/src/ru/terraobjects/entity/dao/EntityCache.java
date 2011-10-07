@@ -1,7 +1,6 @@
 package ru.terraobjects.entity.dao;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.TOObjectTemplate;
