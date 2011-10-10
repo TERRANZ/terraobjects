@@ -9,38 +9,38 @@ import net.sf.persist.annotations.Table;
 @Table(name = "object_template")
 public class TOObjectTemplate {
 
-    private Integer ObjectTemplateId;
-    private String ObjectTemplateName;
-    private Integer ParentObjectTemplateId;
+    private Integer objectTemplateId;
+    private String objectTemplateName;
+    private Integer parentObjectTemplateId;
 
     public Integer getParentObjectTemplateId()
     {
-	return ParentObjectTemplateId;
+	return parentObjectTemplateId;
     }
 
     public void setParentObjectTemplateId(Integer ParentObjectTemplateId)
     {
-	this.ParentObjectTemplateId = ParentObjectTemplateId;
+	this.parentObjectTemplateId = ParentObjectTemplateId;
     }
 
     public Integer getObjectTemplateId()
     {
-	return ObjectTemplateId;
+	return objectTemplateId;
     }
 
     public void setObjectTemplateId(Integer ObjectTemplateId)
     {
-	this.ObjectTemplateId = ObjectTemplateId;
+	this.objectTemplateId = ObjectTemplateId;
     }
 
     public String getObjectTemplateName()
     {
-	return ObjectTemplateName;
+	return objectTemplateName;
     }
 
     public void setObjectTemplateName(String ObjectTemplateName)
     {
-	this.ObjectTemplateName = ObjectTemplateName;
+	this.objectTemplateName = ObjectTemplateName;
     }
     
 }

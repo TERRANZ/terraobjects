@@ -1,7 +1,5 @@
 package ru.terraobjects.server;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.terraobjects.solutions.Solution;
@@ -24,13 +24,31 @@ public class ServerThread implements Runnable
     private Connection sqlConnection = null;
     private Solution solution = null;
 
-    public ServerThread(Socket s, Connection conn, Solution solution)
+    public ServerThread(Socket s, Solution solution,int connNum)
     {
+	System.out.println("Server thread started, num: "+String.valueOf(connNum));
 	try
 	{
 	    this.serverSocket = s;
-	    this.sqlConnection = conn;
+	    String driverName = "com.mysql.jdbc.Driver";
+
+	    Class.forName(driverName);
+
+	    // Create a connection to the database
+	    String serverName = "localhost";
+	    String mydatabase = "terraobjects";
+	    String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
+	    String username = "scan";
+	    String password = "scan";
+
+	    Connection connection = DriverManager.getConnection(url, username, password);
+	    System.out.println("Connected to DB " + connection.getCatalog());
+
+	    this.sqlConnection = connection;
 	    this.solution = (Solution) Class.forName(solution.getClass().getName()).newInstance();
+	} catch (SQLException ex)
+	{
+	    Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 	} catch (InstantiationException ex)
 	{
 	    Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,7 +96,12 @@ public class ServerThread implements Runnable
 		sin.close();
 		sout.close();
 		serverSocket.close();
-	    } catch (IOException ex)
+		//sqlConnection.close();
+	    } //		catch (SQLException ex)
+	    //	    {
+	    //		Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+	    //	    }
+	    catch (IOException ex)
 	    {
 		Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 	    }
