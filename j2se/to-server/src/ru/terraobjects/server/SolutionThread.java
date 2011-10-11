@@ -3,9 +3,6 @@ package ru.terraobjects.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ru.terraobjects.solutions.Solution;
 
 /**

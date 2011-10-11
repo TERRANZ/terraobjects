@@ -59,16 +59,9 @@ public class HashScanSolution implements Solution
 		    String filename = in.readUTF();
 		    String hash = in.readUTF();
 		    Integer newobjId = TOObjectsManager.getInstance().createNewObject(2).getObjectId();
-		    TOObjectsManager.getInstance().setPropertyValue(newobjId, 1, filename,1);
-		    TOObjectsManager.getInstance().setPropertyValue(newobjId, 3, hash,1);
-		try
-		{
-		    //System.out.println("Insert new hash: " + filename + " : " + hash);
-		    finalize();
-		} catch (Throwable ex)
-		{
-		    Logger.getLogger(HashScanSolution.class.getName()).log(Level.SEVERE, null, ex);
-		}
+		    //System.out.println("newobjId "+String.valueOf(newobjId));
+		    TOObjectsManager.getInstance().createNewPropertyWithValue(newobjId, 1, filename,1);
+		    TOObjectsManager.getInstance().createNewPropertyWithValue(newobjId, 3, hash,1);
 		}
 		break;
 		case Opcodes.C_OPCODE_END:

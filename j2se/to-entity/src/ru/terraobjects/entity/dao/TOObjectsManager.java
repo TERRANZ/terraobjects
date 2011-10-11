@@ -207,7 +207,7 @@ public class TOObjectsManager
 	return ret;
     }
 
-    public void setPropertyValue(Integer oid, Integer propid, Object value, Integer type)
+    public void createNewPropertyWithValue(Integer oid, Integer propid, Object value, Integer type)
     {
 	TOObjectProperty newProp = new TOObjectProperty();
 	newProp.setObjectId(oid);
@@ -250,6 +250,35 @@ public class TOObjectsManager
 	}
 
 	switch (prop.getPropTypeId())
+	{
+	    case 1:
+	    {
+		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	    case 2:
+	    {
+		property.setIntVal(Integer.valueOf(String.valueOf(value)));
+	    }
+	    break;
+	    case 3:
+	    {
+		property.setFloatVal(Float.valueOf(String.valueOf(value)));
+	    }
+	    break;
+	    case 4:
+	    {
+		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	}
+	persist.update(property);
+    }
+
+    public void setPropertyValue(Integer oid, Integer propid, Object value, Integer type)
+    {
+	TOObjectProperty property = getObjectProperty(oid, propid);
+	switch (type)
 	{
 	    case 1:
 	    {

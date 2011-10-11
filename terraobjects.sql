@@ -120,19 +120,6 @@ CREATE TABLE `property` (
 
 insert  into `property`(`prop_id`,`prop_type_id`,`prop_defvalue`) values (1,1,'Имя'),(2,1,'Фамилия'),(3,1,'хэш');
 
-/* Trigger structure for table `object` */
-
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS  `on_create_obj_insert_templ_props` $$
-
-CREATE TRIGGER `on_create_obj_insert_templ_props` AFTER INSERT ON `object` FOR EACH ROW BEGIN
-	call create_obj_prop(new.object_template_id,new.object_id);
-    END$$
-
-
-DELIMITER ;
-
 /* Procedure structure for procedure `create_obj_prop` */
 
 DROP PROCEDURE IF EXISTS  `create_obj_prop` ;
