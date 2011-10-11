@@ -24,9 +24,9 @@ public class ServerThread implements Runnable
     private Connection sqlConnection = null;
     private Solution solution = null;
 
-    public ServerThread(Socket s, Solution solution,int connNum)
+    public ServerThread(Socket s, Solution solution, int connNum)
     {
-	System.out.println("Server thread started, num: "+String.valueOf(connNum));
+	System.out.println("Server thread started, num: " + String.valueOf(connNum));
 	try
 	{
 	    this.serverSocket = s;
@@ -96,12 +96,11 @@ public class ServerThread implements Runnable
 		sin.close();
 		sout.close();
 		serverSocket.close();
-		//sqlConnection.close();
-	    } //		catch (SQLException ex)
-	    //	    {
-	    //		Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-	    //	    }
-	    catch (IOException ex)
+		sqlConnection.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+	    } catch (IOException ex)
 	    {
 		Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 	    }

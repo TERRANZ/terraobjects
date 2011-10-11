@@ -5,8 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.dao.TOObjectsManager;
 import ru.terraobjects.entity.dao.TOPropertiesManager;
@@ -21,6 +19,8 @@ public class HashScanSolution implements Solution
     private Connection conn;
     private DataInputStream in = null;
     private DataOutputStream out = null;
+    private TOObjectsManager objectsManager;
+    private TOPropertiesManager propsManager;
 
     public HashScanSolution()
     {
@@ -41,8 +41,8 @@ public class HashScanSolution implements Solution
 	this.conn = c;
 	this.in = in;
 	this.out = out;
-	TOObjectsManager.getInstance().setConnection(conn);
-	TOPropertiesManager.getInstance().setConnection(conn);
+	objectsManager = new TOObjectsManager(conn);
+        propsManager = new TOPropertiesManager(conn);  
     }
 
     public boolean parseInput()
@@ -58,26 +58,26 @@ public class HashScanSolution implements Solution
 		{
 		    String filename = in.readUTF();
 		    String hash = in.readUTF();
-		    Integer newobjId = TOObjectsManager.getInstance().createNewObject(2).getObjectId();
+		    Integer newobjId = objectsManager.createNewObject(2).getObjectId();
 		    //System.out.println("newobjId "+String.valueOf(newobjId));
-		    TOObjectsManager.getInstance().createNewPropertyWithValue(newobjId, 1, filename,1);
-		    TOObjectsManager.getInstance().createNewPropertyWithValue(newobjId, 3, hash,1);
+		    objectsManager.createNewPropertyWithValue(newobjId, 1, filename,1);
+		    objectsManager.createNewPropertyWithValue(newobjId, 3, hash,1);
 		}
 		break;
 		case Opcodes.C_OPCODE_END:
 		    return true;
 		case Opcodes.C_OPCODE_GET_HASHES:
 		{
-		    Integer objCount = TOObjectsManager.getInstance().getObjectsCountByTemplateId(2);
+		    Integer objCount = objectsManager.getObjectsCountByTemplateId(2);
 		    out.writeInt(objCount);
 		    System.out.println("Sent hashes count: " + String.valueOf(objCount));
 		    if (objCount != 0)
 		    {
-			List<TOObject> objects = TOObjectsManager.getInstance().getAllObjectsByTemplateId(2);
+			List<TOObject> objects = objectsManager.getAllObjectsByTemplateId(2);
 			for (TOObject obj : objects)
 			{
-			    String name = TOPropertiesManager.getInstance().getObjectProperty(obj.getObjectId(), 1).getStringVal();
-			    String hash = TOPropertiesManager.getInstance().getObjectProperty(obj.getObjectId(), 3).getStringVal();
+			    String name = propsManager.getObjectProperty(obj.getObjectId(), 1).getStringVal();
+			    String hash = propsManager.getObjectProperty(obj.getObjectId(), 3).getStringVal();
 			    out.writeUTF(name);
 			    out.writeUTF(hash);
 			    out.flush();
@@ -87,7 +87,7 @@ public class HashScanSolution implements Solution
 		break;
 		case Opcodes.C_OPCODE_CLEAN_FULL:
 		{
-		    TOObjectsManager.getInstance().removeAllObjects();
+		    objectsManager.removeAllObjects();
 		}
 		break;
 		default:

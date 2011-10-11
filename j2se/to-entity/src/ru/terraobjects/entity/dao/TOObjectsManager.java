@@ -26,18 +26,8 @@ public class TOObjectsManager
 
     private Connection conn = null;
     private Persist persist = null;
-    private static TOObjectsManager instance = new TOObjectsManager();
 
-    private TOObjectsManager()
-    {
-    }
-
-    public static TOObjectsManager getInstance()
-    {
-	return instance;
-    }
-
-    public void setConnection(Connection conn)
+    public TOObjectsManager(Connection conn)
     {
 	this.conn = conn;
 	persist = new Persist(conn);
@@ -68,10 +58,11 @@ public class TOObjectsManager
 	newobj.setObjectParentId(0);
 	newobj.setObjectTemplateId(templateId);
 	int added = 0;
+	PreparedStatement st = null;
 	try
 	{
 	    //persist.insert(newobj);
-	    PreparedStatement st = conn.prepareStatement("insert into object values (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	    st = conn.prepareStatement("insert into object values (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	    st.setInt(1, 0);
 	    st.setInt(2, 0);
 	    st.setInt(3, templateId);
@@ -86,6 +77,15 @@ public class TOObjectsManager
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
 
 	//createDefaultPropsForObject(templateId, added);
@@ -325,43 +325,73 @@ public class TOObjectsManager
 
     public void removeObjectWithProps(Integer objId)
     {
-	TOPropertiesManager.getInstance().setConnection(conn);
-	TOPropertiesManager.getInstance().removeObjectPropertiesByObjectId(objId);
+	TOPropertiesManager propMngr = new TOPropertiesManager(conn);
+	propMngr.removeObjectPropertiesByObjectId(objId);
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_BY_ID);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_BY_ID);
 	    st.setInt(1, objId);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 
     public void removeObjectsByTemplate(Integer templateId)
     {
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_BY_TEMPLATE_ID);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_BY_TEMPLATE_ID);
 	    st.setInt(1, templateId);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 
     public void removeAllObjects()
     {
-	TOPropertiesManager.getInstance().setConnection(conn);
-	TOPropertiesManager.getInstance().removeAllObjectProperties();
+	TOPropertiesManager propMngr = new TOPropertiesManager(conn);
+	propMngr.removeAllObjectProperties();
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_ALL_OBJECTS);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_ALL_OBJECTS);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 }
