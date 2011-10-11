@@ -40,4 +40,5 @@ public interface DAOConsts
     public final static String REMOVE_OBJECT_PROP_BY_PROP_ID = "delete from object_props where prop_id = ?";
     public final static String REMOVE_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID =
             "delete from object_props where object_id = ? AND prop_id = ?";
+    public final static String CREATE_PROPS_FOR_OBJECT = "call create_obj_prop(? , ?)";
 }

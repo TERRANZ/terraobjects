@@ -16,10 +16,7 @@ import java.util.logging.Logger;
 import net.sf.persist.*;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.TOObjectProperty;
-import ru.terraobjects.entity.TOObjectTemplate;
-import ru.terraobjects.entity.TOObjectTemplateProperty;
 import ru.terraobjects.entity.TOProperty;
-import ru.terraobjects.entity.TOPropertyType;
 
 public class TOObjectsManager
 {
@@ -95,79 +92,19 @@ public class TOObjectsManager
 
     private void createDefaultPropsForObject(Integer templateId, Integer oid)
     {
-	TOObjectTemplate template = (TOObjectTemplate) EntityCache.getInstance().getTemplateFromCache(templateId);
-	if (template == null)
-	{
-//	    throw new RuntimeException("Template " + templateId + " not found!");
-	    System.out.println("template not found in cache, loading");
-	    template = persist.read(TOObjectTemplate.class, DAOConsts.SELECT_OBJECT_TEMPLATE_BY_ID, templateId);
-	    EntityCache.getInstance().addTemplateToCache(templateId, template);
-	}
-
-	if (template.getParentObjectTemplateId() != null)
-	{
-	    createDefaultPropsForObject(template.getParentObjectTemplateId(), oid);
-	}
-
-//	List<TOObjectTemplateProperty> template_props = persist.readList(TOObjectTemplateProperty.class,
-//		DAOConsts.SELECT_OBJECT_TEMPLATE_PROPS_BY_TEMPLATE_ID, template.getObjectTemplateId());
-	List<TOObjectTemplateProperty> template_props = EntityCache.getInstance().
-		getTemplatePropsFromCache(template.getObjectTemplateId());
-	if (template_props == null)
-	{
-//	    throw new RuntimeException("Template " + templateId + " does'nt contains properties!");
-	    System.out.println("template props not found in cache, loading");
-	    template_props = persist.readList(TOObjectTemplateProperty.class,
-		    DAOConsts.SELECT_OBJECT_TEMPLATE_PROPS_BY_TEMPLATE_ID, template.getObjectTemplateId());
-	    EntityCache.getInstance().addTemplatePropsToCache(template.getObjectTemplateId(), template_props);
-	}
-	for (TOObjectTemplateProperty p : template_props)
-	{
-	    TOObjectProperty newprop = new TOObjectProperty();
-	    newprop.setObjectId(oid);
-	    newprop.setPropertyId(p.getPropertyId());
-	    //TOProperty prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, p.getPropertyId());
-	    TOProperty prop = EntityCache.getInstance().getPropertyFromCache(p.getPropertyId());
-	    if (prop == null)
-	    {
-		System.out.println("property not found in cache, loading");
-		prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, p.getPropertyId());
-		EntityCache.getInstance().addPropertyToCache(p.getPropertyId(), prop);
-	    }
-	    switch (prop.getPropTypeId())
-	    {
-		case TOPropertyType.TYPE_STR: //String
+	persist.executeUpdate(DAOConsts.CREATE_PROPS_FOR_OBJECT, new Object[]
 		{
-		    newprop.setStringVal(prop.getPropDefValue());
-		}
-		break;
-		case TOPropertyType.TYPE_INT: //Int
-		{
-		    newprop.setIntVal(Integer.valueOf(prop.getPropDefValue()));
-		}
-		break;
-		case TOPropertyType.TYPE_FLOAT: //Float
-		{
-		    newprop.setFloatVal(Float.valueOf(prop.getPropDefValue()));
-		}
-		break;
-		case TOPropertyType.TYPE_TEXT: //Text
-		{
-		    newprop.setStringVal(prop.getPropDefValue());
-		}
-		break;
-	    }
-	    persist.insert(newprop);
-	}
+		    templateId, oid
+		});
     }
 
     public TOObjectProperty getObjectProperty(Integer oid, Integer pid)
     {
-	Object[] params = new Object[2];
-	params[0] = oid;
-	params[1] = pid;
 	return persist.read(TOObjectProperty.class,
-		DAOConsts.SELECT_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID, params);
+		DAOConsts.SELECT_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID, new Object[]
+		{
+		    oid, pid
+		});
     }
 
     public Object getPropertyValue(Integer oid, Integer pid)

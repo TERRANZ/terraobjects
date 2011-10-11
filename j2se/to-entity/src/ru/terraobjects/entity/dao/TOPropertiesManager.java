@@ -63,53 +63,93 @@ public class TOPropertiesManager
 
     public void removeObjectPropertyByPropId(Integer propId)
     {
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_PROP_ID);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_PROP_ID);
 	    st.setInt(1, propId);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 
     public void removeObjectPropertiesByObjectId(Integer oId)
     {
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID);
 	    st.setInt(1, oId);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 
     public void removeObjectProperty(Integer oId, Integer propId)
     {
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID);
 	    st.setInt(1, oId);
 	    st.setInt(2, propId);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 
     public void removeAllObjectProperties()
     {
+	PreparedStatement st = null;
 	try
 	{
-	    PreparedStatement st = conn.prepareStatement(DAOConsts.REMOVE_ALL_OBJECT_PROPS);
+	    st = conn.prepareStatement(DAOConsts.REMOVE_ALL_OBJECT_PROPS);
 	    st.execute();
 	} catch (SQLException ex)
 	{
 	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
     }
 }
