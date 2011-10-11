@@ -2,7 +2,8 @@
 SQLyog Enterprise - MySQL GUI v8.14 
 MySQL - 5.1.58-1-log : Database - terraobjects
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -123,22 +124,22 @@ insert  into `property`(`prop_id`,`prop_type_id`,`prop_defvalue`) values (1,1,'Ð
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `on_create_obj_insert_templ_props` */$$
+DROP TRIGGER IF EXISTS  `on_create_obj_insert_templ_props` $$
 
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `on_create_obj_insert_templ_props` AFTER INSERT ON `object` FOR EACH ROW BEGIN
+CREATE TRIGGER `on_create_obj_insert_templ_props` AFTER INSERT ON `object` FOR EACH ROW BEGIN
 	call create_obj_prop(new.object_template_id,new.object_id);
-    END */$$
+    END$$
 
 
 DELIMITER ;
 
 /* Procedure structure for procedure `create_obj_prop` */
 
-/*!50003 DROP PROCEDURE IF EXISTS  `create_obj_prop` */;
+DROP PROCEDURE IF EXISTS  `create_obj_prop` ;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_obj_prop`(templ_id INT,obj_id INT)
+CREATE PROCEDURE `create_obj_prop`(templ_id INT,obj_id INT)
 BEGIN
 	DECLARE no_more_props INT DEFAULT 0;
 	DECLARE prop INT DEFAULT 0;	
@@ -153,7 +154,7 @@ BEGIN
 	UNTIL no_more_props = 1
 	end repeat;
 	CLOSE props_cur;
-    END */$$
+    END $$
 DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
