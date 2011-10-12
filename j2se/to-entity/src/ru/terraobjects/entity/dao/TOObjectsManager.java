@@ -17,6 +17,7 @@ import net.sf.persist.*;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.TOProperty;
+import ru.terraobjects.entity.TOPropertyType;
 
 public class TOObjectsManager
 {
@@ -151,24 +152,34 @@ public class TOObjectsManager
 	newProp.setPropertyId(propid);
 	switch (type)
 	{
-	    case 1:
+	    case TOPropertyType.TYPE_STR:
 	    {
 		newProp.setStringVal(String.valueOf(value));
 	    }
 	    break;
-	    case 2:
+	    case TOPropertyType.TYPE_INT:
 	    {
 		newProp.setIntVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 3:
+	    case TOPropertyType.TYPE_FLOAT:
 	    {
 		newProp.setFloatVal(Float.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 4:
+	    case TOPropertyType.TYPE_TEXT:
 	    {
 		newProp.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	    case TOPropertyType.TYPE_DATE:
+	    {
+		newProp.setDateVal((Date) value);
+	    }
+	    break;
+	    case TOPropertyType.TYPE_LIST:
+	    {
+		newProp.setListVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
 	}
@@ -188,24 +199,34 @@ public class TOObjectsManager
 
 	switch (prop.getPropTypeId())
 	{
-	    case 1:
+	    case TOPropertyType.TYPE_STR:
 	    {
 		property.setStringVal(String.valueOf(value));
 	    }
 	    break;
-	    case 2:
+	    case TOPropertyType.TYPE_INT:
 	    {
 		property.setIntVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 3:
+	    case TOPropertyType.TYPE_FLOAT:
 	    {
 		property.setFloatVal(Float.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 4:
+	    case TOPropertyType.TYPE_TEXT:
 	    {
 		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	    case TOPropertyType.TYPE_DATE:
+	    {
+		property.setDateVal((Date) value);
+	    }
+	    break;
+	    case TOPropertyType.TYPE_LIST:
+	    {
+		property.setListVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
 	}
@@ -217,24 +238,34 @@ public class TOObjectsManager
 	TOObjectProperty property = getObjectProperty(oid, propid);
 	switch (type)
 	{
-	    case 1:
+	    case TOPropertyType.TYPE_STR:
 	    {
 		property.setStringVal(String.valueOf(value));
 	    }
 	    break;
-	    case 2:
+	    case TOPropertyType.TYPE_INT:
 	    {
 		property.setIntVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 3:
+	    case TOPropertyType.TYPE_FLOAT:
 	    {
 		property.setFloatVal(Float.valueOf(String.valueOf(value)));
 	    }
 	    break;
-	    case 4:
+	    case TOPropertyType.TYPE_TEXT:
 	    {
 		property.setStringVal(String.valueOf(value));
+	    }
+	    break;
+	    case TOPropertyType.TYPE_DATE:
+	    {
+		property.setDateVal((Date) value);
+	    }
+	    break;
+	    case TOPropertyType.TYPE_LIST:
+	    {
+		property.setListVal(Integer.valueOf(String.valueOf(value)));
 	    }
 	    break;
 	}
@@ -263,7 +294,7 @@ public class TOObjectsManager
     public void removeObjectWithProps(Integer objId)
     {
 	TOPropertiesManager propMngr = new TOPropertiesManager(conn);
-	propMngr.removeObjectPropertiesByObjectId(objId);
+	propMngr.removeObjPropertiesFromObject(objId);
 	PreparedStatement st = null;
 	try
 	{

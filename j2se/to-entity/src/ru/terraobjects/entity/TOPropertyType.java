@@ -11,6 +11,8 @@ public class TOPropertyType
     public static final int TYPE_INT = 2;
     public static final int TYPE_FLOAT = 3;
     public static final int TYPE_TEXT = 4;
+    public static final int TYPE_DATE = 5;
+    public static final int TYPE_LIST = 6;
     private Integer PropTypeId;
     private String PropTypeName;
 
@@ -27,11 +29,6 @@ public class TOPropertyType
     public Integer getPropTypeId()
     {
 	return PropTypeId;
-    }
-
-    public void setPropTypeId(Integer PropTypeId)
-    {
-	this.PropTypeId = PropTypeId;
     }
 
     public TOPropertyType()

@@ -1,5 +1,6 @@
 package ru.terraobjects.entity;
 
+import java.util.Date;
 import net.sf.persist.annotations.Column;
 import net.sf.persist.annotations.Table;
 
@@ -11,88 +12,112 @@ import net.sf.persist.annotations.Table;
 public class TOObjectProperty
 {
 
-    private Integer ObjectPropertyId;
-    private Integer ObjectId;
-    private Integer PropertyId;
-    private Integer IntVal;
-    private Float FloatVal;
-    private String StringVal;
-    private String TextVal;
+    private Integer objectPropertyId;
+    private Integer objectId;
+    private Integer propertyId;
+    private Integer intVal;
+    private Float floatVal;
+    private String stringVal;
+    private String textVal;
+    private Date dateVal;
+    private Integer listVal;
+
+    @Column(name = "dateval")
+    public Date getDateVal()
+    {
+	return dateVal;
+    }
+
+    public void setDateVal(Date dateVal)
+    {
+	this.dateVal = dateVal;
+    }
+
+    @Column(name = "listval")
+    public Integer getListVal()
+    {
+	return listVal;
+    }
+
+    public void setListVal(Integer listVal)
+    {
+	this.listVal = listVal;
+    }
 
     @Column(name = "floatval")
     public Float getFloatVal()
     {
-	return FloatVal;
+	return floatVal;
     }
 
-    public void setFloatVal(Float FloatVal)
+    public void setFloatVal(Float floatVal)
     {
-	this.FloatVal = FloatVal;
+	this.floatVal = floatVal;
     }
 
     @Column(name = "intval")
     public Integer getIntVal()
     {
-	return IntVal;
+	return intVal;
     }
 
-    public void setIntVal(Integer IntVal)
+    public void setIntVal(Integer intVal)
     {
-	this.IntVal = IntVal;
+	this.intVal = intVal;
     }
 
     @Column(name = "object_id")
     public Integer getObjectId()
     {
-	return ObjectId;
+	return objectId;
     }
 
-    public void setObjectId(Integer ObjectId)
+    public void setObjectId(Integer objectId)
     {
-	this.ObjectId = ObjectId;
+	this.objectId = objectId;
     }
 
     @Column(name = "object_props_id")
     public Integer getObjectPropertyId()
     {
-	return ObjectPropertyId;
+	return objectPropertyId;
     }
 
-    public void setObjectPropertyId(Integer ObjectPropertyId)
+    public void setObjectPropertyId(Integer objectPropertyId)
     {
-	this.ObjectPropertyId = ObjectPropertyId;
+	this.objectPropertyId = objectPropertyId;
     }
 
     @Column(name = "prop_id")
     public Integer getPropertyId()
     {
-	return PropertyId;
+	return propertyId;
     }
 
-    public void setPropertyId(Integer PropertyId)
+    public void setPropertyId(Integer propertyId)
     {
-	this.PropertyId = PropertyId;
+	this.propertyId = propertyId;
     }
 
     @Column(name = "strval")
     public String getStringVal()
     {
-	return StringVal;
+	return stringVal;
     }
 
-    public void setStringVal(String StringVal)
+    public void setStringVal(String stringVal)
     {
-	this.StringVal = StringVal;
+	this.stringVal = stringVal;
     }
 
     @Column(name = "textval")
     public String getTextVal()
     {
-	return TextVal;
+	return textVal;
     }
 
-    public void setTextVal(String TextVal)
+    public void setTextVal(String textVal)
     {
-	this.TextVal = TextVal;
+	this.textVal = textVal;
     }
 }
