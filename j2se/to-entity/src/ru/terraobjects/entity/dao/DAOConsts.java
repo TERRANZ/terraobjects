@@ -42,5 +42,5 @@ public interface DAOConsts
 	    "delete from object_props where object_id = ? AND prop_id = ?";
     public final static String CREATE_PROPS_FOR_OBJECT = "call create_obj_prop(? , ?)";
     public final static String SELECT_OBJPROP_LIST_BY_LISTPROP_ID = "select object_id from object_prop_list "
-	    + "where list_id = ?";
+	    + "where list_id = ?";    
 }

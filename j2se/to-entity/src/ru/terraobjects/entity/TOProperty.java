@@ -11,40 +11,40 @@ import net.sf.persist.annotations.Table;
 public class TOProperty
 {
 
-    private Integer PropId;
-    private Integer PropTypeId;
-    private String PropDefValue;
+    private Integer propId;
+    private Integer propTypeId;
+    private String propDefValue;
 
     @Column(name = "prop_defvalue")
     public String getPropDefValue()
     {
-	return PropDefValue;
+	return propDefValue;
     }
 
-    public void setPropDefValue(String PropDefValue)
+    public void setPropDefValue(String propDefValue)
     {
-	this.PropDefValue = PropDefValue;
+	this.propDefValue = propDefValue;
     }
 
     @Column(name = "prop_id")
     public Integer getPropId()
     {
-	return PropId;
+	return propId;
     }
 
-    public void setPropId(Integer PropId)
+    public void setPropId(Integer propId)
     {
-	this.PropId = PropId;
+	this.propId = propId;
     }
 
     @Column(name = "prop_type_id")
     public Integer getPropTypeId()
     {
-	return PropTypeId;
+	return propTypeId;
     }
 
-    public void setPropTypeId(Integer PropTypeId)
+    public void setPropTypeId(Integer propTypeId)
     {
-	this.PropTypeId = PropTypeId;
+	this.propTypeId = propTypeId;
     }
 }

@@ -10,41 +10,41 @@ import net.sf.persist.annotations.Table;
 @Table(name = "object_template_props")
 public class TOObjectTemplateProperty
 {
-    private Integer ObjectTemplateId;    
-    private Integer PropId;
-    private Integer ObjectTemplatePropsId;
+    private Integer objectTemplateId;    
+    private Integer propId;
+    private Integer objectTemplatePropsId;
 
     @Column(name="object_template_id")    
     public Integer getObjectTemplateId()
     {
-	return ObjectTemplateId;
+	return objectTemplateId;
     }
 
-    public void setObjectTemplateId(Integer ObjectTemplateId)
+    public void setObjectTemplateId(Integer objectTemplateId)
     {
-	this.ObjectTemplateId = ObjectTemplateId;
+	this.objectTemplateId = objectTemplateId;
     }
 
     @Column(name="object_template_props_id")
     public Integer getObjectTemplatePropertyId()
     {
-	return ObjectTemplatePropsId;
+	return objectTemplatePropsId;
     }
 
-    public void setObjectTemplatePropertyId(Integer ObjectTemplatePropertyId)
+    public void setObjectTemplatePropertyId(Integer objectTemplatePropertyId)
     {
-	this.ObjectTemplatePropsId = ObjectTemplatePropertyId;
+	this.objectTemplatePropsId = objectTemplatePropertyId;
     }
 
     @Column(name="prop_id")
     public Integer getPropertyId()
     {
-	return PropId;
+	return propId;
     }
 
-    public void setPropertyId(Integer PropertyId)
+    public void setPropertyId(Integer propertyId)
     {
-	this.PropId = PropertyId;
+	this.propId = propertyId;
     }
 
 }

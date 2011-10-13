@@ -64,7 +64,7 @@ public class DefaultSolution implements Solution
                     int propId = in.readInt();
                     //read 1 utf - value
                     String value = in.readUTF();
-                    objectsManager.setPropertyValue(objId, propId, value);
+                    propsManager.setPropertyValue(objId, propId, value);
                     out.writeInt(Opcodes.S_OPCODE_OK);
                 }
                 break;

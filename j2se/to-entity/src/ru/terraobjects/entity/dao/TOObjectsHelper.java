@@ -30,8 +30,9 @@ public class TOObjectsHelper
         {
             //loading object from db with props and construct new Object
             retObj = objectClass.newInstance();
-            TOObjectsManager objManager = new TOObjectsManager(conn);
-            Integer objId = objManager.getObject(id).getObjectId();
+            TOPropertiesManager propsManager = new TOPropertiesManager(conn);
+            TOObjectsManager objectsManager = new TOObjectsManager(conn);
+            Integer objId = objectsManager.getObject(id).getObjectId();
             if (objId != null)
             {
                 for (Method m : retObj.getClass().getMethods())
@@ -40,7 +41,7 @@ public class TOObjectsHelper
                     {
                         //get method setter and set to retObj info from obj
                         Integer propId = Integer.valueOf(m.getAnnotation(PropSetter.class).id());
-                        m.invoke(retObj, objManager.getPropertyValue(objId, propId));
+                        m.invoke(retObj, propsManager.getPropertyValue(objId, propId));
                     }
                 }
             } else
@@ -72,13 +73,14 @@ public class TOObjectsHelper
         //deconstruct object to props and store it into db
         Integer retId = null;
         TOObjectsManager objManager = new TOObjectsManager(conn);
+        TOPropertiesManager prosManager = new TOPropertiesManager(conn);
         //get templateId  from object
         TemplateId templateIdAnnotation = objToStore.getClass().getAnnotation(TemplateId.class);
         if (templateIdAnnotation != null)
         {
             Integer tId = Integer.valueOf(templateIdAnnotation.id());
             retId = objManager.createNewObject(tId).getObjectId();
-            objManager.createDefaultPropsForObject(tId, retId);
+            prosManager.createDefaultPropsForObject(tId, retId);
             for (Method m : objToStore.getClass().getMethods())
             {
                 if (m.isAnnotationPresent(PropGetter.class))
@@ -99,7 +101,7 @@ public class TOObjectsHelper
                     {
                         Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    objManager.setPropertyValue(retId, propId, val);
+                    prosManager.setPropertyValue(retId, propId, val);
                 }
             }
         }
