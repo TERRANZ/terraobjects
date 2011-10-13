@@ -12,9 +12,14 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface Property {
+@Target(
+{
+    ElementType.METHOD
+})
+public @interface PropSetter
+{
+
     String name() default "";
+
     String id();
 }
-

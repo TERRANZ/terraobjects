@@ -35,7 +35,7 @@ public class ServerThread implements Runnable
 	    Class.forName(driverName);
 
 	    // Create a connection to the database
-	    String serverName = "localhost";
+	    String serverName = "192.168.162.134";
 	    String mydatabase = "terraobjects";
 	    String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
 	    String username = "scan";

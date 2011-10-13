@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +40,7 @@ public class Main
             {
                 String scanDir = args[1];
                 System.out.println("Scannig dir: " + scanDir);
-                final Collection<File> all = new ArrayList<File>();
+                final Collection<File> all = new LinkedList<File>();
                 addFilesRecursively(new File(scanDir), all);
                 for (File f : all)
                 {
@@ -71,6 +71,8 @@ public class Main
                 } else if ("clean".equals(args[0]))
                 {
                     out.writeInt(100);
+                    out.flush();
+                    out.writeInt(0);
                     out.flush();
                 }
             }

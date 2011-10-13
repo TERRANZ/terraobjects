@@ -91,7 +91,7 @@ public class TOObjectsManager
 	return newobj;
     }
 
-    private void createDefaultPropsForObject(Integer templateId, Integer oid)
+    public void createDefaultPropsForObject(Integer templateId, Integer oid)
     {
 	persist.executeUpdate(DAOConsts.CREATE_PROPS_FOR_OBJECT, new Object[]
 		{
