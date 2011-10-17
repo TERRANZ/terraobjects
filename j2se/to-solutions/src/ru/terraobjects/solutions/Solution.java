@@ -10,12 +10,6 @@ import java.sql.Connection;
  */
 public interface Solution
 {
-
-    public Integer getPort();
-
-    public String getName();
-
     public boolean parseInput();
-
     public void setParams(Connection c, DataInputStream in, DataOutputStream out);
 }

@@ -90,7 +90,9 @@ public class TOObjectsHelper
                     Object val = null;
                     try
                     {
-                        val = m.invoke(objToStore, null);
+                        val = m.invoke(objToStore, new Object[]
+                                {
+                                });
                     } catch (IllegalAccessException ex)
                     {
                         Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);

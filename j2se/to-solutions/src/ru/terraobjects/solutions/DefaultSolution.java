@@ -10,11 +10,13 @@ import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.TOPropertyType;
 import ru.terraobjects.entity.dao.TOObjectsManager;
 import ru.terraobjects.entity.dao.TOPropertiesManager;
+import ru.terraobjects.solutions.annotation.ASolution;
 
 /**
  *
  * @author korostelev
  */
+@ASolution(name = "default", port = "31337")
 public class DefaultSolution implements Solution
 {
 
@@ -23,16 +25,6 @@ public class DefaultSolution implements Solution
     private DataOutputStream out = null;
     private TOObjectsManager objectsManager;
     private TOPropertiesManager propsManager;
-
-    public Integer getPort()
-    {
-        return 31337;
-    }
-
-    public String getName()
-    {
-        return "Default";
-    }
 
     public boolean parseInput()
     {
@@ -191,7 +183,7 @@ public class DefaultSolution implements Solution
         this.conn = c;
         this.in = in;
         this.out = out;
-	objectsManager = new TOObjectsManager(conn);
-        propsManager = new TOPropertiesManager(conn);        
+        objectsManager = new TOObjectsManager(conn);
+        propsManager = new TOPropertiesManager(conn);
     }
 }

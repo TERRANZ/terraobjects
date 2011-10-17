@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import ru.terraobjects.solutions.Solution;
+import ru.terraobjects.solutions.annotation.ASolution;
 
 /**
  *
@@ -24,8 +25,9 @@ public class SolutionThread implements Runnable
 	int count = 0;
 	try
 	{
-	    Integer port = solution.getPort();
-	    System.out.println("Starting solution " + solution.getName());
+            ASolution annotation = (ASolution) solution.getClass().getAnnotation(ASolution.class);
+	    Integer port = new Integer(annotation.port());
+	    System.out.println("Starting solution " + annotation.name());
 	    ServerSocket server = new ServerSocket(port);
 	    boolean stop = false;
 	    Socket socket = null;
