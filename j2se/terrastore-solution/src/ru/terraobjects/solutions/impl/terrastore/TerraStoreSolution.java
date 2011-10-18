@@ -25,7 +25,7 @@ import ru.terraobjects.solutions.impl.terrastore.consts.ServerOpcodes;
 @ASolution(name = "Terra Store Solution", port = "2011")
 public class TerraStoreSolution implements Solution
 {
-    
+
     private String LOG_TAG = "TerraStoreSolution:";
     private Connection conn;
     private DataInputStream in;
@@ -33,10 +33,10 @@ public class TerraStoreSolution implements Solution
     private TOObjectsManager objectsManager;
     private TOPropertiesManager propsManager;
     private Integer level = -1;
-    
+
     private enum ClientState
     {
-        
+
         NOT_LOGGED_IN,
         LOGGED_IN,
         WORKING,
@@ -44,7 +44,7 @@ public class TerraStoreSolution implements Solution
         RECV_OBJECTS;
     };
     private ClientState clientState = ClientState.NOT_LOGGED_IN;
-    
+
     @Override
     public boolean parseInput()
     {
@@ -53,7 +53,7 @@ public class TerraStoreSolution implements Solution
             Integer opCode = in.readInt();
             switch (opCode)
             {
-                
+
                 case ClientOpcodes.LOGIN:
                 {
                     String password = in.readUTF();
@@ -72,7 +72,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.GET_AVAIL_OBJECTS:
                 {
                     if (clientState != ClientState.LOGGED_IN)
@@ -92,7 +92,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.READY:
                 {
                     if (clientState != ClientState.WORKING)
@@ -107,7 +107,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.GET_OBJECTS:
                 {
                     if (clientState != ClientState.READY)
@@ -118,7 +118,7 @@ public class TerraStoreSolution implements Solution
                     {
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
-                        
+
                         Integer templateId = in.readInt();
                         List<TOObject> objects = objectsManager.getAllObjsByTemplId(templateId);
                         out.writeInt(objects.size());
@@ -165,7 +165,63 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
+                case ClientOpcodes.NEW_OBJ:
+                {
+                    if (clientState != ClientState.READY)
+                    {
+                        out.writeInt(ServerOpcodes.BYE);
+                        return false;
+                    } else
+                    {
+                        Integer templateId = in.readInt();
+                        Integer newObjId = objectsManager.createNewObject(templateId).getObjectId();
+                        propsManager.createDefaultPropsForObject(templateId, newObjId);
+                        out.writeInt(ServerOpcodes.OK);
+                    }
+                }
+                break;
+
+                case ClientOpcodes.SET_PROP_VAL:
+                {
+                    if (clientState != ClientState.READY)
+                    {
+                        out.writeInt(ServerOpcodes.BYE);
+                        return false;
+                    } else
+                    {
+                        Integer objId = in.readInt();
+                        Integer propId = in.readInt();
+                        Integer propType = in.readInt();
+                        setPropVal(objId, propId, propType);
+                        out.writeInt(ServerOpcodes.OK);
+                    }
+                }
+                break;
+
+                case ClientOpcodes.SET_PROPS_VAL:
+                {
+                    if (clientState != ClientState.READY)
+                    {
+                        out.writeInt(ServerOpcodes.BYE);
+                        return false;
+                    } else
+                    {
+                        Integer count = in.readInt();
+                        for (int i = 0; i < count; i++)
+                        {
+                            Integer objId = in.readInt();
+                            Integer propId = in.readInt();
+                            Integer propType = in.readInt();
+                            setPropVal(objId, propId, propType);
+                        }
+                        out.writeInt(ServerOpcodes.OK);
+                    }
+                }
+                break;
+
+
+
                 case ClientOpcodes.QUIT:
                 {
                     out.writeInt(ServerOpcodes.BYE);
@@ -185,7 +241,7 @@ public class TerraStoreSolution implements Solution
             return false;
         }
     }
-    
+
     @Override
     public void setParams(Connection c, DataInputStream in, DataOutputStream out)
     {
@@ -195,20 +251,54 @@ public class TerraStoreSolution implements Solution
         objectsManager = new TOObjectsManager(conn);
         propsManager = new TOPropertiesManager(conn);
     }
-    
+
     private void checkPassword(String pass)
     {
         //TODO implement password checking
         level = 0;
     }
-    
+
     private Boolean isLoggedIn()
     {
         return level != -1;
     }
-    
+
     private void changeClientState(ClientState newState)
     {
         System.out.println(LOG_TAG + "client state " + clientState.toString() + " => " + newState.toString());
+    }
+
+    private void setPropVal(Integer objId, Integer propId, Integer propType) throws IOException
+    {
+        Object val = null;
+        switch (propType)
+        {
+            case TOPropertyType.TYPE_STR:
+            {
+                val = (String) in.readUTF();
+            }
+            break;
+            case TOPropertyType.TYPE_INT:
+            {
+                val = (Integer) in.readInt();
+            }
+            break;
+            case TOPropertyType.TYPE_FLOAT:
+            {
+                val = (Float) in.readFloat();
+            }
+            break;
+            case TOPropertyType.TYPE_TEXT:
+            {
+                val = (String) in.readUTF();
+            }
+            break;
+            case TOPropertyType.TYPE_DATE:
+            {
+                val = (Long) in.readLong();
+            }
+            break;
+        }
+        propsManager.setPropertyValue(objId, propId, val, propType);
     }
 }

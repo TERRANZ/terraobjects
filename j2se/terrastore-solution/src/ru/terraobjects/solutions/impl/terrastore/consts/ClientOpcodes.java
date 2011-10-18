@@ -25,9 +25,10 @@ public interface ClientOpcodes
     //клиент просит послать ему список объектов данного парента
     //нужно для отсылки всех товаров на складе, или в накладной
     public static final int NEW_OBJ = 20;
-    public static final int SET_PROP_INFO = 21;
+    public static final int DEL_OBJ = 21;
+    public static final int SET_PROP_VAL = 22;
     //int objid, int propid, obj val
-    public static final int SET_PROPS_INFO = 22;
+    public static final int SET_PROPS_VAL = 23;
     //int objid, (int propid, obj val)
     public static final int FIND_OBJ_BY_PROP = 30;
     //
