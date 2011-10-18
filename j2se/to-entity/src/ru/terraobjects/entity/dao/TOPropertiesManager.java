@@ -40,7 +40,7 @@ public class TOPropertiesManager
         return persist.readList(TOProperty.class, DAOConsts.SELECT_ALL_PROPERTIES);
     }
 
-    public List<TOObjectProperty> getObjectPropertiesForObjectId(Integer oid)
+    public List<TOObjectProperty> getObjPropsForObjId(Integer oid)
     {
         return persist.readList(TOObjectProperty.class, DAOConsts.SELECT_OBJECT_PROPS_BY_OBJECT_ID, oid);
     }

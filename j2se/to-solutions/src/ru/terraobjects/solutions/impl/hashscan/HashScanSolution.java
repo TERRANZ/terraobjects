@@ -74,7 +74,7 @@ public class HashScanSolution implements Solution
                     System.out.println("Sent hashes count: " + String.valueOf(objCount));
                     if (objCount != 0)
                     {
-                        List<TOObject> objects = objectsManager.getAllObjectsByTemplateId(2);
+                        List<TOObject> objects = objectsManager.getAllObjsByTemplId(2);
                         for (TOObject obj : objects)
                         {
                             HashObject ho = (HashObject) objectsHelper.loadObject(HashObject.class, obj.getObjectId());

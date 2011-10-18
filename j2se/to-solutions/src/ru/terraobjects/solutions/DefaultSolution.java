@@ -82,7 +82,7 @@ public class DefaultSolution implements Solution
                 {
                     //read 1 int - objId
                     //get template of object and return count of props
-                    List<TOObjectProperty> props = propsManager.getObjectPropertiesForObjectId(objId);
+                    List<TOObjectProperty> props = propsManager.getObjPropsForObjId(objId);
                     //int - fields count
                     out.writeInt(props.size());
 
