@@ -36,7 +36,6 @@ public class TerraStoreSolution implements Solution
 
     private enum ClientState
     {
-
         NOT_LOGGED_IN,
         LOGGED_IN,
         WORKING,
