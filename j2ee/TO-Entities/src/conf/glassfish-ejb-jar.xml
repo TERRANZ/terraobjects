@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-ejb-jar PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 EJB 3.1//EN" "http://glassfish.org/dtds/glassfish-ejb-jar_3_1-1.dtd">
+<glassfish-ejb-jar>
+    <enterprise-beans>
+        <ejb>
+            <ejb-name>ObjectsManagerBean</ejb-name>
+            <jndi-name>ejb\ObjectsManagerBean</jndi-name>
+        </ejb>
+        <ejb>
+            <ejb-name>PropsManagerBean</ejb-name>
+            <jndi-name>ejb\PropsManagerBean</jndi-name>
+        </ejb>
+    </enterprise-beans>
+</glassfish-ejb-jar>

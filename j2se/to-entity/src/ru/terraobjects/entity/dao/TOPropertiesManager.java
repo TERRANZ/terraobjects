@@ -163,10 +163,30 @@ public class TOPropertiesManager
 
     public void createDefaultPropsForObject(Integer templateId, Integer oid)
     {
-        persist.executeUpdate(DAOConsts.CREATE_PROPS_FOR_OBJECT, new Object[]
-                {
-                    templateId, oid
-                });
+//        persist.executeUpdate(DAOConsts.CREATE_PROPS_FOR_OBJECT, new Object[]
+//                {
+//                    templateId, oid
+//                });
+        PreparedStatement st = null;
+        try
+        {
+            st = conn.prepareStatement(DAOConsts.CREATE_PROPS_FOR_OBJECT);
+            st.setInt(1, templateId);
+            st.setInt(2, oid);
+            st.execute();
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+        } finally
+        {
+            try
+            {
+                st.close();
+            } catch (SQLException ex)
+            {
+                Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public Object getPropertyValue(Integer oid, Integer pid)

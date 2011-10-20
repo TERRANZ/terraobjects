@@ -36,6 +36,7 @@ public class TerraStoreSolution implements Solution
 
     private enum ClientState
     {
+
         NOT_LOGGED_IN,
         LOGGED_IN,
         WORKING,
@@ -55,13 +56,16 @@ public class TerraStoreSolution implements Solution
 
                 case ClientOpcodes.LOGIN:
                 {
-                    String password = in.readUTF();
+                    int len = in.readInt();
+                    byte[] buf = new byte[len];
+                    in.read(buf);
+                    String password = new String(buf);
                     checkPassword(password);
                     if (!isLoggedIn())
                     {
                         out.writeInt(ServerOpcodes.LOGIN_FAILED);
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         out.writeInt(ServerOpcodes.LOGIN_OK);
@@ -77,7 +81,7 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.LOGGED_IN)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         //отсылаем список доступных темлейтов
@@ -97,7 +101,7 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.WORKING)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         out.writeInt(ServerOpcodes.OK);
@@ -112,7 +116,7 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.READY)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         clientState = ClientState.WORKING;
@@ -134,7 +138,9 @@ public class TerraStoreSolution implements Solution
                                 {
                                     case TOPropertyType.TYPE_STR:
                                     {
-                                        out.writeUTF((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId()));
+                                        byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).getBytes("UTF-8");
+                                        out.writeInt(outbytes.length);
+                                        out.write(outbytes);
                                     }
                                     break;
                                     case TOPropertyType.TYPE_INT:
@@ -149,7 +155,9 @@ public class TerraStoreSolution implements Solution
                                     break;
                                     case TOPropertyType.TYPE_TEXT:
                                     {
-                                        out.writeUTF((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId()));
+                                        byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).getBytes("UTF-8");
+                                        out.writeInt(outbytes.length);
+                                        out.write(outbytes);
                                     }
                                     break;
                                     case TOPropertyType.TYPE_DATE:
@@ -170,10 +178,11 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.READY)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         Integer templateId = in.readInt();
+                        Integer parentId = in.readInt();
                         Integer newObjId = objectsManager.createNewObject(templateId).getObjectId();
                         propsManager.createDefaultPropsForObject(templateId, newObjId);
                         out.writeInt(ServerOpcodes.OK);
@@ -186,7 +195,7 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.READY)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         Integer objId = in.readInt();
@@ -203,7 +212,7 @@ public class TerraStoreSolution implements Solution
                     if (clientState != ClientState.READY)
                     {
                         out.writeInt(ServerOpcodes.BYE);
-                        return false;
+                        return true;
                     } else
                     {
                         Integer count = in.readInt();
@@ -219,26 +228,24 @@ public class TerraStoreSolution implements Solution
                 }
                 break;
 
-
-
                 case ClientOpcodes.QUIT:
                 {
                     out.writeInt(ServerOpcodes.BYE);
-                    return false;
+                    return true;
                 }
                 default:
                 {
                     out.writeInt(ServerOpcodes.ERR);
                     out.writeInt(ServerOpcodes.BYE);
-                    return false;
+                    return true;
                 }
-            }
-            return true;
+            }            
         } catch (IOException ex)
         {
-            Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            //Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("TerraStoreSolution: client disconnected");
         }
+        return false;
     }
 
     @Override
@@ -270,11 +277,15 @@ public class TerraStoreSolution implements Solution
     private void setPropVal(Integer objId, Integer propId, Integer propType) throws IOException
     {
         Object val = null;
+
         switch (propType)
         {
             case TOPropertyType.TYPE_STR:
             {
-                val = (String) in.readUTF();
+                int len = in.readInt();
+                byte[] buf = new byte[len];
+                in.read(buf);
+                val = new String(buf);
             }
             break;
             case TOPropertyType.TYPE_INT:
@@ -289,7 +300,10 @@ public class TerraStoreSolution implements Solution
             break;
             case TOPropertyType.TYPE_TEXT:
             {
-                val = (String) in.readUTF();
+                int len = in.readInt();
+                byte[] buf = new byte[len];
+                in.read(buf);
+                val = new String(buf);
             }
             break;
             case TOPropertyType.TYPE_DATE:
