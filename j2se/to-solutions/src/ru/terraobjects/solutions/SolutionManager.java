@@ -1,4 +1,4 @@
-package ru.terraobjects.server;
+package ru.terraobjects.solutions;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ru.terraobjects.solutions.Solution;
 import ru.terraobjects.solutions.annotation.ASolution;
 
 /**
@@ -20,47 +19,80 @@ import ru.terraobjects.solutions.annotation.ASolution;
  */
 public class SolutionManager
 {
-    
+
     private static SolutionManager instance = new SolutionManager();
     private static final String SOLUTIONS_CLASS_PATH = "ru.terraobjects.solutions.impl";
     private ArrayList<Solution> solutions = new ArrayList<Solution>();
-    
+
+    private String scanLib()
+    {
+        final Collection<File> all = new LinkedList<File>();
+        addFilesRecursively(new File("."), all);
+        String ret = "";
+        for (File f : all)
+        {
+            try
+            {
+                if (!f.isDirectory())
+                {
+                    ret += f.getAbsolutePath() + ";";
+                }
+            } catch (Exception ex)
+            {
+                Logger.getLogger(SolutionManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return ret.substring(0, ret.length() - 1);
+    }
+
+    private static void addFilesRecursively(File file, Collection<File> all)
+    {
+        final File[] children = file.listFiles();
+        if (children != null)
+        {
+            for (File child : children)
+            {
+                all.add(child);
+                addFilesRecursively(child, all);
+            }
+        }
+    }
+
     private SolutionManager()
     {
-    try
+        try
         {
-            String cp = System.getProperty("java.class.path");
+            String cp = scanLib();//System.getProperty("java.class.path");
+            //System.out.println("CP " + cp);
             List<String> classesScanned = new LinkedList<String>();
-            List<String> classes = new LinkedList<String>();
             classesScanned = scan(cp);
             for (String cn : classesScanned)
             {
+                cn = cn.replace("/", ".");
+                //System.out.println("Founded class " + cn);
+                
                 if (cn.contains(SOLUTIONS_CLASS_PATH))
                 {
-                    classes.add(cn);
-                }
-            }
+                    //System.out.println("Founded class " + cn);
 
-            for (String cn : classes)
-            {
-                //System.out.println("Founded class "+cn);
-
-                //Ок, наш клиент
-                //System.out.println("Ok, found " + cn + " loading it");
-                try
-                {
-                    Solution newClass = (Solution) Class.forName(cn).newInstance();
-                    ASolution annotation = (ASolution) newClass.getClass().getAnnotation(ASolution.class);
-                    if (annotation != null)
+                    //Ок, наш клиент
+//                    System.out.println("Ok, found " + cn + " loading it");
+                    try
                     {
-                        //Ок, совсем хорошо, нашлась нужная аннотация
-                        solutions.add(newClass);
+                        Solution newClass = (Solution) Class.forName(cn).newInstance();
+                        ASolution annotation = (ASolution) newClass.getClass().getAnnotation(ASolution.class);
+                        if (annotation != null)
+                        {
+                            //Ок, совсем хорошо, нашлась нужная аннотация
+                            solutions.add(newClass);
+                            //System.out.println("Ok, found " + cn + " it's out client!");
+                        }
+                    } catch (Exception e)
+                    {
+                       // System.out.println("Can't load class " + cn + " it's not a solution");
                     }
-                } catch (Exception e)
-                {
-                    //System.out.println("Can't load class " + cn + " it's not a LexOperation");
-                }
 
+                }
             }
         } catch (Exception ex)
         {
@@ -68,17 +100,15 @@ public class SolutionManager
         }
     }
 
-    
-    
     public static SolutionManager getInstance()
     {
         return instance;
     }
-    
+
     public List<Solution> getSolutions()
-    {        
+    {
         return solutions;
-    }    
+    }
 
     /**
      * Просканировать строку, представляющую из себя classpath и вернуть
@@ -121,7 +151,7 @@ public class SolutionManager
                 scanJar(file, classes);
             } else
             {
-                throw new IOException("Unknown classpath entry " + file.getName());
+                //throw new IOException("Unknown classpath entry " + file.getName());
             }
         }
     }
@@ -196,5 +226,4 @@ public class SolutionManager
 
         classes.add(name.substring(0, name.length() - 6).replace(File.separator, ".")); // Извлекаем имя класса из имени файла: удаляем расширение и преобразуем разделители
     }
-
 }
