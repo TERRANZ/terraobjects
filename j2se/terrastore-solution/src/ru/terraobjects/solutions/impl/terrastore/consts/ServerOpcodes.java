@@ -13,7 +13,7 @@ public interface ServerOpcodes
     public static final Integer LOGIN_FAILED = 2;
     public static final Integer LOGIN_OK = 3;//+int = user level
     public static final Integer AVAIL_OBJECTS = 4;
-    public static final Integer OBJECTS_COUNT = 5;
+    public static final Integer OBJECT = 5;
     public static final Integer OBJECTS = 6;
     //xml
 }

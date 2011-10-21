@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ import ru.terraobjects.solutions.impl.terrastore.consts.ServerOpcodes;
 @ASolution(name = "Terra Store Solution", port = "2011")
 public class TerraStoreSolution implements Solution
 {
-    
+
     private String LOG_TAG = "TerraStoreSolution:";
     private Connection conn;
     private DataInputStream in;
@@ -36,10 +37,10 @@ public class TerraStoreSolution implements Solution
     private TOObjectsManager objectsManager;
     private TOPropertiesManager propsManager;
     private Integer level = -1;
-    
+
     private enum ClientState
     {
-        
+
         NOT_LOGGED_IN,
         LOGGED_IN,
         WORKING,
@@ -47,7 +48,7 @@ public class TerraStoreSolution implements Solution
         RECV_OBJECTS;
     };
     private ClientState clientState = ClientState.NOT_LOGGED_IN;
-    
+
     @Override
     public boolean parseInput()
     {
@@ -58,13 +59,13 @@ public class TerraStoreSolution implements Solution
             Integer opCode = in.readInt();
             switch (opCode)
             {
-                
+
                 case ClientOpcodes.LOGIN:
                 {
                     int len = in.readInt() + 4;
                     byte[] buf = new byte[in.available()];
                     in.read(buf);
-                    
+
                     String password = new String(buf);
                     checkPassword(password);
                     if (!isLoggedIn())
@@ -81,7 +82,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.GET_AVAIL_OBJECTS:
                 {
                     if (clientState != ClientState.LOGGED_IN)
@@ -93,6 +94,8 @@ public class TerraStoreSolution implements Solution
                         //отсылаем список доступных темплейтов
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
+                        sendInt(ServerOpcodes.AVAIL_OBJECTS);
+                        sendInt(17);
                         for (int i = 3; i <= 20; i++)
                         {
                             out.writeInt(i);
@@ -101,7 +104,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.READY:
                 {
 //                    if (clientState != ClientState.WORKING)
@@ -116,7 +119,7 @@ public class TerraStoreSolution implements Solution
                     //}
                 }
                 break;
-                
+
                 case ClientOpcodes.GET_OBJECTS:
                 {
                     if (clientState != ClientState.READY)
@@ -127,7 +130,8 @@ public class TerraStoreSolution implements Solution
                     {
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
-                        
+
+                        sendInt(ServerOpcodes.OBJECTS);
                         Integer templateId = in.readInt();
                         List<TOObject> objects = objectsManager.getAllObjsByTemplId(templateId);
                         sendInt(objects.size());
@@ -136,10 +140,12 @@ public class TerraStoreSolution implements Solution
                             sendObject(obj);
                         }
                         sendInt(ServerOpcodes.OK);
+                        clientState = ClientState.READY;
+                        changeClientState(ClientState.READY);
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.GET_OBJECT:
                 {
                     if (clientState != ClientState.READY)
@@ -150,6 +156,7 @@ public class TerraStoreSolution implements Solution
                     {
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
+                        sendInt(ServerOpcodes.OBJECT);
                         Integer objId = in.readInt();
                         TOObject retObj = objectsManager.getObject(objId);
                         if (retObj != null)
@@ -157,12 +164,12 @@ public class TerraStoreSolution implements Solution
                             sendObject(retObj);
                         } else
                         {
-                            sendInt(ServerOpcodes.ERR);                            
+                            sendInt(ServerOpcodes.ERR);
                         }
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.NEW_OBJ:
                 {
                     if (clientState != ClientState.READY)
@@ -181,7 +188,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.SET_PROP_VAL:
                 {
                     if (clientState != ClientState.READY)
@@ -198,7 +205,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.SET_PROPS_VAL:
                 {
                     if (clientState != ClientState.READY)
@@ -219,7 +226,7 @@ public class TerraStoreSolution implements Solution
                     }
                 }
                 break;
-                
+
                 case ClientOpcodes.QUIT:
                 {
                     sendInt(ServerOpcodes.BYE);
@@ -240,7 +247,7 @@ public class TerraStoreSolution implements Solution
         }
         return false;
     }
-    
+
     @Override
     public void setParams(Connection c, BufferedInputStream in, BufferedOutputStream out)
     {
@@ -250,35 +257,34 @@ public class TerraStoreSolution implements Solution
         objectsManager = new TOObjectsManager(conn);
         propsManager = new TOPropertiesManager(conn);
     }
-    
+
     private void checkPassword(String pass)
     {
         //TODO implement password checking
         level = 0;
     }
-    
+
     private Boolean isLoggedIn()
     {
         return level != -1;
     }
-    
+
     private void changeClientState(ClientState newState)
     {
         System.out.println(LOG_TAG + "client state " + clientState.toString() + " => " + newState.toString());
     }
-    
+
     private void setPropVal(Integer objId, Integer propId, Integer propType) throws IOException
     {
         Object val = null;
-        
         switch (propType)
         {
             case TOPropertyType.TYPE_STR:
             {
-                int len = in.readInt();
+                int len = in.readInt() + 4;
                 byte[] buf = new byte[len];
                 in.read(buf);
-                val = new String(buf);
+                val = new String(buf).substring(3);
             }
             break;
             case TOPropertyType.TYPE_INT:
@@ -288,26 +294,32 @@ public class TerraStoreSolution implements Solution
             break;
             case TOPropertyType.TYPE_FLOAT:
             {
-                val = (Float) in.readFloat();
+                byte[] buf = new byte[4];
+                in.read(buf);
+                ByteBuffer bb = ByteBuffer.wrap(buf);
+                val = bb.getFloat();
             }
             break;
             case TOPropertyType.TYPE_TEXT:
             {
-                int len = in.readInt();
+                int len = in.readInt() + 4;
                 byte[] buf = new byte[len];
                 in.read(buf);
-                val = new String(buf);
+                val = new String(buf).substring(3);
             }
             break;
             case TOPropertyType.TYPE_DATE:
             {
-                val = (Long) in.readLong();
+                byte[] buf = new byte[8];
+                in.read(buf);
+                ByteBuffer bb = ByteBuffer.wrap(buf);
+                val = new Date(bb.getLong());
             }
             break;
         }
         propsManager.setPropertyValue(objId, propId, val, propType);
     }
-    
+
     private void sendBuf(byte[] buf)
     {
         try
@@ -319,56 +331,62 @@ public class TerraStoreSolution implements Solution
             Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void sendInt(int val)
     {
-        sendBuf(NetworkPacket.intToByteArray(val));
+        sendBuf(TypeConverter.toByta(val));
     }
-    
+
     private void sendObject(TOObject obj) throws UnsupportedEncodingException, IOException
     {
         sendInt(obj.getId());
         sendInt(obj.getParentId());
-        List<TOObjectProperty> objProps = propsManager.getObjPropsForObjId(obj.getId());
+        sendObjectProps(obj.getId());
+    }
+
+    private void sendObjectProps(Integer objId) throws UnsupportedEncodingException, IOException
+    {
+        List<TOObjectProperty> objProps = propsManager.getObjPropsForObjId(objId);
         sendInt(objProps.size());
         for (TOObjectProperty objProp : objProps)
         {
             sendInt(objProp.getId());
             Integer propType = propsManager.getPropertyType(objProp.getPropertyId()).getPropTypeId();
             sendInt(propType);
+            byte[] outbytes = new byte[]
+            {
+            };
             switch (propType)
             {
+
                 case TOPropertyType.TYPE_STR:
                 {
-                    byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getId(), objProp.getPropertyId())).getBytes("UTF-8");
-                    sendInt(outbytes.length);
-                    sendBuf(outbytes);
+                    outbytes = ((String) propsManager.getPropertyValue(objId, objProp.getPropertyId())).getBytes("UTF-8");
                 }
                 break;
                 case TOPropertyType.TYPE_INT:
                 {
-                    sendInt(((Integer) propsManager.getPropertyValue(obj.getId(), objProp.getPropertyId())).intValue());
+                    outbytes = TypeConverter.toByta(((Integer) propsManager.getPropertyValue(objId, objProp.getPropertyId())).intValue());
                 }
                 break;
                 case TOPropertyType.TYPE_FLOAT:
                 {
-                    out.writeFloat(((Float) propsManager.getPropertyValue(obj.getId(), objProp.getPropertyId())).floatValue());
+                    outbytes = TypeConverter.toByta(((Float) propsManager.getPropertyValue(objId, objProp.getPropertyId())).floatValue());
                 }
                 break;
                 case TOPropertyType.TYPE_TEXT:
                 {
-                    byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getId(), objProp.getPropertyId())).getBytes("UTF-8");
-                    sendInt(outbytes.length);
-                    sendBuf(outbytes);
+                    outbytes = ((String) propsManager.getPropertyValue(objId, objProp.getPropertyId())).getBytes("UTF-8");
                 }
                 break;
                 case TOPropertyType.TYPE_DATE:
                 {
-                    out.writeLong(((Date) propsManager.getPropertyValue(obj.getId(), objProp.getPropertyId())).getTime());
+                    outbytes = TypeConverter.toByta(((Date) propsManager.getPropertyValue(objId, objProp.getPropertyId())).getTime());
                 }
                 break;
             }
-            out.flush();
+            sendInt(outbytes.length);
+            sendBuf(outbytes);
         }
     }
 }
