@@ -1,5 +1,8 @@
 package ru.terraobjects.solutions.impl.terrastore;
 
+import com.sun.org.apache.xpath.internal.compiler.OpCodes;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -50,26 +53,29 @@ public class TerraStoreSolution implements Solution
     {
         try
         {
+//            byte[] buff = new byte[4];
+//            int read = in.read(buff);
             Integer opCode = in.readInt();
             switch (opCode)
             {
 
                 case ClientOpcodes.LOGIN:
                 {
-                    int len = in.readInt();
-                    byte[] buf = new byte[len];
+                    int len = in.readInt()+4;
+                    byte[] buf = new byte[in.available()];
                     in.read(buf);
+                    
                     String password = new String(buf);
                     checkPassword(password);
                     if (!isLoggedIn())
                     {
-                        out.writeInt(ServerOpcodes.LOGIN_FAILED);
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.LOGIN_FAILED);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
-                        out.writeInt(ServerOpcodes.LOGIN_OK);
-                        out.writeInt(level);
+                        sendInt(ServerOpcodes.LOGIN_OK);
+                        sendInt(level);
                         clientState = ClientState.LOGGED_IN;
                         changeClientState(ClientState.LOGGED_IN);
                     }
@@ -80,34 +86,34 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.LOGGED_IN)
                     {
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
-                        //отсылаем список доступных темлейтов
+                        //отсылаем список доступных темплейтов
+                        clientState = ClientState.WORKING;
+                        changeClientState(ClientState.WORKING);
                         for (int i = 3; i <= 20; i++)
                         {
                             out.writeInt(i);
                         }
-                        out.writeInt(ServerOpcodes.OK);
-                        clientState = ClientState.WORKING;
-                        changeClientState(ClientState.WORKING);
+                        sendInt(ServerOpcodes.OK);
                     }
                 }
                 break;
 
                 case ClientOpcodes.READY:
                 {
-                    if (clientState != ClientState.WORKING)
-                    {
-                        out.writeInt(ServerOpcodes.BYE);
-                        return true;
-                    } else
-                    {
-                        out.writeInt(ServerOpcodes.OK);
+//                    if (clientState != ClientState.WORKING)
+//                    {
+//                        sendInt(ServerOpcodes.BYE);
+//                        return true;
+//                    } else
+//                    {
+                        sendInt(ServerOpcodes.OK);
                         clientState = ClientState.READY;
                         changeClientState(ClientState.READY);
-                    }
+                    //}
                 }
                 break;
 
@@ -115,7 +121,7 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
@@ -124,28 +130,28 @@ public class TerraStoreSolution implements Solution
 
                         Integer templateId = in.readInt();
                         List<TOObject> objects = objectsManager.getAllObjsByTemplId(templateId);
-                        out.writeInt(objects.size());
+                        sendInt(objects.size());
                         for (TOObject obj : objects)
                         {
                             List<TOObjectProperty> objProps = propsManager.getObjPropsForObjId(obj.getObjectId());
-                            out.writeInt(objProps.size());
+                            sendInt(objProps.size());
                             for (TOObjectProperty objProp : objProps)
                             {
-                                out.writeInt(objProp.getObjectPropertyId());
+                                sendInt(objProp.getObjectPropertyId());
                                 Integer propType = propsManager.getPropertyType(objProp.getPropertyId()).getPropTypeId();
-                                out.writeInt(propType);
+                                sendInt(propType);
                                 switch (propType)
                                 {
                                     case TOPropertyType.TYPE_STR:
                                     {
                                         byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).getBytes("UTF-8");
-                                        out.writeInt(outbytes.length);
-                                        out.write(outbytes);
+                                        sendInt(outbytes.length);
+                                        sendBuf(outbytes);
                                     }
                                     break;
                                     case TOPropertyType.TYPE_INT:
                                     {
-                                        out.writeInt(((Integer) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).intValue());
+                                        sendInt(((Integer) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).intValue());
                                     }
                                     break;
                                     case TOPropertyType.TYPE_FLOAT:
@@ -156,8 +162,8 @@ public class TerraStoreSolution implements Solution
                                     case TOPropertyType.TYPE_TEXT:
                                     {
                                         byte[] outbytes = ((String) propsManager.getPropertyValue(obj.getObjectId(), objProp.getPropertyId())).getBytes("UTF-8");
-                                        out.writeInt(outbytes.length);
-                                        out.write(outbytes);
+                                        sendInt(outbytes.length);
+                                        sendBuf(outbytes);
                                     }
                                     break;
                                     case TOPropertyType.TYPE_DATE:
@@ -166,9 +172,10 @@ public class TerraStoreSolution implements Solution
                                     }
                                     break;
                                 }
+                                out.flush();
                             }
                         }
-                        out.writeInt(ServerOpcodes.OK);
+                        sendInt(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -177,15 +184,17 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
                         Integer templateId = in.readInt();
                         Integer parentId = in.readInt();
-                        Integer newObjId = objectsManager.createNewObject(templateId).getObjectId();
+                        TOObject newObj = objectsManager.createNewObject(templateId);
+                        newObj.setParentId(parentId);
+                        Integer newObjId = newObj.getObjectId();
                         propsManager.createDefaultPropsForObject(templateId, newObjId);
-                        out.writeInt(ServerOpcodes.OK);
+                        sendInt(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -194,7 +203,7 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
@@ -202,7 +211,7 @@ public class TerraStoreSolution implements Solution
                         Integer propId = in.readInt();
                         Integer propType = in.readInt();
                         setPropVal(objId, propId, propType);
-                        out.writeInt(ServerOpcodes.OK);
+                        sendInt(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -211,7 +220,7 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        out.writeInt(ServerOpcodes.BYE);
+                        sendInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
@@ -223,36 +232,37 @@ public class TerraStoreSolution implements Solution
                             Integer propType = in.readInt();
                             setPropVal(objId, propId, propType);
                         }
-                        out.writeInt(ServerOpcodes.OK);
+                        sendInt(ServerOpcodes.OK);
                     }
                 }
                 break;
 
                 case ClientOpcodes.QUIT:
                 {
-                    out.writeInt(ServerOpcodes.BYE);
+                    sendInt(ServerOpcodes.BYE);
                     return true;
                 }
                 default:
                 {
-                    out.writeInt(ServerOpcodes.ERR);
-                    out.writeInt(ServerOpcodes.BYE);
+                    sendInt(ServerOpcodes.ERR);
+                    sendInt(ServerOpcodes.BYE);
                     return true;
                 }
-            }            
+            }
         } catch (IOException ex)
         {
             //Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("TerraStoreSolution: client disconnected");
+            throw new RuntimeException(ex);
         }
         return false;
     }
 
     @Override
-    public void setParams(Connection c, DataInputStream in, DataOutputStream out)
+    public void setParams(Connection c, BufferedInputStream in, BufferedOutputStream out)
     {
-        this.in = in;
-        this.out = out;
+        this.in = new DataInputStream(in);
+        this.out = new DataOutputStream(out);
         this.conn = c;
         objectsManager = new TOObjectsManager(conn);
         propsManager = new TOPropertiesManager(conn);
@@ -313,5 +323,22 @@ public class TerraStoreSolution implements Solution
             break;
         }
         propsManager.setPropertyValue(objId, propId, val, propType);
+    }
+
+    private void sendBuf(byte[] buf)
+    {
+        try
+        {
+            out.write(buf);
+            out.flush();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void sendInt(int val)
+    {
+        sendBuf(NetworkPacket.intToByteArray(val));
     }
 }

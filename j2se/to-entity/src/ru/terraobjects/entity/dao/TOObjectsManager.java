@@ -55,7 +55,7 @@ public class TOObjectsManager
         newobj.setObjectCreatedAt(new Date());
         newobj.setObjectUpdatedAt(new Date());
         newobj.setObjectId(0);
-        newobj.setObjectParentId(0);
+        newobj.setParentId(0);
         newobj.setObjectTemplateId(templateId);
         int added = 0;
         PreparedStatement st = null;

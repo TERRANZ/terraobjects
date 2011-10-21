@@ -1,5 +1,7 @@
 package ru.terraobjects.solutions.impl.hashscan;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,7 +19,7 @@ import ru.terraobjects.solutions.annotation.ASolution;
  *
  * @author terranz
  */
-@ASolution(name= "Hash scan",port="12345")
+@ASolution(name = "Hash scan", port = "12345")
 public class HashScanSolution implements Solution
 {
 
@@ -32,11 +34,11 @@ public class HashScanSolution implements Solution
     {
     }
 
-    public void setParams(Connection c, DataInputStream in, DataOutputStream out)
+    public void setParams(Connection c, BufferedInputStream in, BufferedOutputStream out)
     {
         this.conn = c;
-        this.in = in;
-        this.out = out;
+        this.in = new DataInputStream(in);
+        this.out = new DataOutputStream(out);
         objectsManager = new TOObjectsManager(conn);
         //propsManager = new TOPropertiesManager(conn);
         objectsHelper = new TOObjectsHelper(conn);

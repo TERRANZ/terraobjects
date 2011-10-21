@@ -4,7 +4,6 @@ package ru.terraobjects.server;
  *
  * @author terranz
  */
-import ru.terraobjects.solutions.SolutionManager;
 import ru.terraobjects.solutions.Solution;
 
 public class Main

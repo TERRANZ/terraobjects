@@ -1,4 +1,4 @@
-package ru.terraobjects.solutions;
+package ru.terraobjects.server;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ru.terraobjects.solutions.Solution;
 import ru.terraobjects.solutions.annotation.ASolution;
+import ru.terraobjects.solutions.impl.hashscan.HashScanSolution;
+import ru.terraobjects.solutions.impl.terrastore.TerraStoreSolution;
 
 /**
  *
@@ -62,21 +65,21 @@ public class SolutionManager
     {
         try
         {
-            String cp = scanLib();//System.getProperty("java.class.path");
-            //System.out.println("CP " + cp);
+            String cp = System.getProperty("java.class.path");
+            System.out.println("CP " + cp);
             List<String> classesScanned = new LinkedList<String>();
             classesScanned = scan(cp);
             for (String cn : classesScanned)
             {
                 cn = cn.replace("/", ".");
-                //System.out.println("Founded class " + cn);
-                
+                System.out.println("Founded class " + cn);
+
                 if (cn.contains(SOLUTIONS_CLASS_PATH))
                 {
-                    //System.out.println("Founded class " + cn);
+                    System.out.println("Founded class " + cn);
 
                     //Ок, наш клиент
-//                    System.out.println("Ok, found " + cn + " loading it");
+                    System.out.println("Ok, found " + cn + " loading it");
                     try
                     {
                         Solution newClass = (Solution) Class.forName(cn).newInstance();
@@ -85,11 +88,11 @@ public class SolutionManager
                         {
                             //Ок, совсем хорошо, нашлась нужная аннотация
                             solutions.add(newClass);
-                            //System.out.println("Ok, found " + cn + " it's out client!");
+                            System.out.println("Ok, found " + cn + " it's out client!");
                         }
                     } catch (Exception e)
                     {
-                       // System.out.println("Can't load class " + cn + " it's not a solution");
+                        // System.out.println("Can't load class " + cn + " it's not a solution");
                     }
 
                 }
@@ -107,7 +110,11 @@ public class SolutionManager
 
     public List<Solution> getSolutions()
     {
-        return solutions;
+        //return solutions;
+        ArrayList<Solution> sols = new ArrayList<Solution>();
+        sols.add(new HashScanSolution());
+        sols.add(new TerraStoreSolution());
+        return sols;
     }
 
     /**

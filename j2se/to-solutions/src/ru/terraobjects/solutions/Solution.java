@@ -1,7 +1,7 @@
 package ru.terraobjects.solutions;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.sql.Connection;
 
 /**
@@ -11,5 +11,5 @@ import java.sql.Connection;
 public interface Solution
 {
     public boolean parseInput();
-    public void setParams(Connection c, DataInputStream in, DataOutputStream out);
+    public void setParams(Connection c, BufferedInputStream in, BufferedOutputStream out);
 }

@@ -1,6 +1,9 @@
 package ru.terraobjects.solutions;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -44,7 +47,7 @@ public class DefaultSolution implements Solution
                     //read 2 int - object template,parentObjectId        
                     int objParentId = in.readInt();
                     TOObject newObj = objectsManager.createNewObject(objId);
-                    newObj.setObjectParentId(objParentId);
+                    newObj.setParentId(objParentId);
                     //return 1 int - id of new object
                     out.writeInt(newObj.getObjectId());
                     out.writeInt(Opcodes.S_OPCODE_OK);
@@ -178,11 +181,11 @@ public class DefaultSolution implements Solution
         return false;
     }
 
-    public void setParams(Connection c, DataInputStream in, DataOutputStream out)
+    public void setParams(Connection c, BufferedInputStream in, BufferedOutputStream out)
     {
         this.conn = c;
-        this.in = in;
-        this.out = out;
+        this.in = new DataInputStream(in);
+        this.out = new DataOutputStream(out);
         objectsManager = new TOObjectsManager(conn);
         propsManager = new TOPropertiesManager(conn);
     }

@@ -58,7 +58,7 @@ public class TOObject
 	this.objectId = objectId;
     }
 
-    public void setObjectParentId(Integer objectParentId)
+    public void setParentId(Integer objectParentId)
     {
 	this.objectParentId = objectParentId;
     }
