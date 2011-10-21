@@ -52,11 +52,11 @@ public class TOObjectsManager
     public TOObject createNewObject(Integer templateId)
     {
         TOObject newobj = new TOObject();
-        newobj.setObjectCreatedAt(new Date());
-        newobj.setObjectUpdatedAt(new Date());
-        newobj.setObjectId(0);
+        newobj.setCreatedAt(new Date());
+        newobj.setUpdatedAt(new Date());
+        newobj.setId(0);
         newobj.setParentId(0);
-        newobj.setObjectTemplateId(templateId);
+        newobj.setTemplateId(templateId);
         int added = 0;
         PreparedStatement st = null;
         try
@@ -66,8 +66,8 @@ public class TOObjectsManager
             st.setInt(1, 0);
             st.setInt(2, 0);
             st.setInt(3, templateId);
-            st.setDate(4, new java.sql.Date(newobj.getObjectCreatedAt().getTime()));
-            st.setDate(5, new java.sql.Date(newobj.getObjectUpdatedAt().getTime()));
+            st.setDate(4, new java.sql.Date(newobj.getCreatedAt().getTime()));
+            st.setDate(5, new java.sql.Date(newobj.getUpdatedAt().getTime()));
             st.execute();
             ResultSet rs = st.getGeneratedKeys();
             if (rs.last())
@@ -89,7 +89,7 @@ public class TOObjectsManager
         }
 
         //createDefaultPropsForObject(templateId, added);
-        newobj.setObjectId(added);
+        newobj.setId(added);
         return newobj;
     }
 

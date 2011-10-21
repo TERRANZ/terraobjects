@@ -200,7 +200,7 @@ public class TOPropertiesManager
             EntityCache.getInstance().addPropertyToCache(objprop.getPropertyId(), prop);
         }
         Object ret = null;
-        switch (prop.getPropTypeId())
+        switch (prop.getTypeId())
         {
             case TOPropertyType.TYPE_STR:
             {
@@ -288,7 +288,7 @@ public class TOPropertiesManager
             EntityCache.getInstance().addPropertyToCache(property.getPropertyId(), prop);
         }
 
-        switch (prop.getPropTypeId())
+        switch (prop.getTypeId())
         {
             case TOPropertyType.TYPE_STR:
             {

@@ -11,7 +11,7 @@ import net.sf.persist.annotations.Table;
 public class TOObjectPropertyList
 {
 
-    private Integer objectPropertyListId;
+    private Integer id;
     private Integer objectId;
     private Integer listId;
     private Integer position;
@@ -39,14 +39,14 @@ public class TOObjectPropertyList
     }
 
     @Column(name = "object_property_list_id")
-    public Integer getObjectPropertyListId()
+    public Integer getId()
     {
-	return objectPropertyListId;
+	return id;
     }
 
-    public void setObjectPropertyListId(Integer objectPropertyListId)
+    public void setId(Integer objectPropertyListId)
     {
-	this.objectPropertyListId = objectPropertyListId;
+	this.id = objectPropertyListId;
     }
 
     @Column(name = "position")

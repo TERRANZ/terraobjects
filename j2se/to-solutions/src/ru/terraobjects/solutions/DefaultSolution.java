@@ -49,7 +49,7 @@ public class DefaultSolution implements Solution
                     TOObject newObj = objectsManager.createNewObject(objId);
                     newObj.setParentId(objParentId);
                     //return 1 int - id of new object
-                    out.writeInt(newObj.getObjectId());
+                    out.writeInt(newObj.getId());
                     out.writeInt(Opcodes.S_OPCODE_OK);
                 }
                 break;
@@ -70,10 +70,10 @@ public class DefaultSolution implements Solution
                     TOObject obj = objectsManager.getObject(objId);
                     if (obj != null)
                     {
-                        out.writeInt(obj.getObjectParentId());
-                        out.writeInt(obj.getObjectTemplateId());
-                        out.writeLong(obj.getObjectCreatedAt().getTime());
-                        out.writeLong(obj.getObjectUpdatedAt().getTime());
+                        out.writeInt(obj.getParentId());
+                        out.writeInt(obj.getTemplateId());
+                        out.writeLong(obj.getCreatedAt().getTime());
+                        out.writeLong(obj.getUpdatedAt().getTime());
                         out.writeInt(Opcodes.S_OPCODE_OK);
                     } else
                     {
@@ -92,7 +92,7 @@ public class DefaultSolution implements Solution
                     for (TOObjectProperty prop : props)
                     {
                         //int - prop type
-                        int propType = propsManager.getPropertyType(prop.getObjectPropertyId()).getPropTypeId();
+                        int propType = propsManager.getPropertyType(prop.getId()).getPropTypeId();
                         out.writeInt(propType);
                         String outVal = "";
                         switch (propType)
@@ -123,7 +123,7 @@ public class DefaultSolution implements Solution
                     int propId = in.readInt();
                     //return 1 int, 1 utf - propType,value        
                     TOObjectProperty prop = propsManager.getObjectProperty(objId, propId);
-                    int propType = propsManager.getPropertyType(prop.getObjectPropertyId()).getPropTypeId();
+                    int propType = propsManager.getPropertyType(prop.getId()).getPropTypeId();
                     out.writeInt(propType);
                     String outVal = "";
                     switch (propType)

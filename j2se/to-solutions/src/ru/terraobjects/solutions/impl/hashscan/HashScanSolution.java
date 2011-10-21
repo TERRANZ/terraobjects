@@ -57,7 +57,7 @@ public class HashScanSolution implements Solution
                 {
                     String filename = in.readUTF();
                     String hash = in.readUTF();
-//                    Integer newobjId = objectsManager.createNewObject(2).getObjectId();
+//                    Integer newobjId = objectsManager.createNewObject(2).getId();
 //                    //System.out.println("newobjId "+String.valueOf(newobjId));
 //                    objectsManager.createNewPropertyWithValue(newobjId, 1, filename, 1);
 //                    objectsManager.createNewPropertyWithValue(newobjId, 3, hash, 1);
@@ -79,7 +79,7 @@ public class HashScanSolution implements Solution
                         List<TOObject> objects = objectsManager.getAllObjsByTemplId(2);
                         for (TOObject obj : objects)
                         {
-                            HashObject ho = (HashObject) objectsHelper.loadObject(HashObject.class, obj.getObjectId());
+                            HashObject ho = (HashObject) objectsHelper.loadObject(HashObject.class, obj.getId());
                             out.writeUTF(ho.getFileName());
                             out.writeUTF(ho.getHash());
                             out.flush();

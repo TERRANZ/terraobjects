@@ -24,6 +24,7 @@ public interface ClientOpcodes
     public static final int GET_OBJECTS_BY_PARENT = 11;
     //клиент просит послать ему список объектов данного парента
     //нужно для отсылки всех товаров на складе, или в накладной
+    public static final int GET_OBJECT = 12;
     public static final int NEW_OBJ = 20;
     public static final int DEL_OBJ = 21;
     public static final int SET_PROP_VAL = 22;

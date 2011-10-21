@@ -12,7 +12,7 @@ import net.sf.persist.annotations.Table;
 public class TOObjectProperty
 {
 
-    private Integer objectPropertyId;
+    private Integer id;
     private Integer objectId;
     private Integer propertyId;
     private Integer intVal;
@@ -78,14 +78,14 @@ public class TOObjectProperty
     }
 
     @Column(name = "object_props_id")
-    public Integer getObjectPropertyId()
+    public Integer getId()
     {
-	return objectPropertyId;
+	return id;
     }
 
-    public void setObjectPropertyId(Integer objectPropertyId)
+    public void setId(Integer objectPropertyId)
     {
-	this.objectPropertyId = objectPropertyId;
+	this.id = objectPropertyId;
     }
 
     @Column(name = "prop_id")

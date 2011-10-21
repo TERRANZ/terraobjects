@@ -32,7 +32,7 @@ public class TOObjectsHelper
             retObj = objectClass.newInstance();
             TOPropertiesManager propsManager = new TOPropertiesManager(conn);
             TOObjectsManager objectsManager = new TOObjectsManager(conn);
-            Integer objId = objectsManager.getObject(id).getObjectId();
+            Integer objId = objectsManager.getObject(id).getId();
             if (objId != null)
             {
                 for (Method m : retObj.getClass().getMethods())
@@ -79,7 +79,7 @@ public class TOObjectsHelper
         if (templateIdAnnotation != null)
         {
             Integer tId = Integer.valueOf(templateIdAnnotation.id());
-            retId = objManager.createNewObject(tId).getObjectId();
+            retId = objManager.createNewObject(tId).getId();
             prosManager.createDefaultPropsForObject(tId, retId);
             for (Method m : objToStore.getClass().getMethods())
             {

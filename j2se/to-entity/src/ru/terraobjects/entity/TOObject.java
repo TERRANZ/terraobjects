@@ -12,64 +12,64 @@ import net.sf.persist.annotations.Table;
 public class TOObject
 {
 
-    private Integer objectId;
-    private Integer objectParentId;
-    private Integer objectTemplateId;
-    private Date objectCreatedAt;
-    private Date objectUpdatedAt;
+    private Integer id;
+    private Integer parentId;
+    private Integer templateId;
+    private Date createdAt;
+    private Date updatedAt;
 
     @Column(name = "object_created_at")
-    public Date getObjectCreatedAt()
+    public Date getCreatedAt()
     {
-	return objectCreatedAt;
+	return createdAt;
     }
 
     @Column(name = "object_id")
-    public Integer getObjectId()
+    public Integer getId()
     {
-	return objectId;
+	return id;
     }
 
     @Column(name = "parent_object_id")
-    public Integer getObjectParentId()
+    public Integer getParentId()
     {
-	return objectParentId;
+	return parentId;
     }
 
     @Column(name = "object_template_id")
-    public Integer getObjectTemplateId()
+    public Integer getTemplateId()
     {
-	return objectTemplateId;
+	return templateId;
     }
 
     @Column(name = "object_updated_at")
-    public Date getObjectUpdatedAt()
+    public Date getUpdatedAt()
     {
-	return objectUpdatedAt;
+	return updatedAt;
     }
 
-    public void setObjectCreatedAt(Date objectCreatedAt)
+    public void setCreatedAt(Date objectCreatedAt)
     {
-	this.objectCreatedAt = objectCreatedAt;
+	this.createdAt = objectCreatedAt;
     }
 
-    public void setObjectId(Integer objectId)
+    public void setId(Integer objectId)
     {
-	this.objectId = objectId;
+	this.id = objectId;
     }
 
     public void setParentId(Integer objectParentId)
     {
-	this.objectParentId = objectParentId;
+	this.parentId = objectParentId;
     }
 
-    public void setObjectTemplateId(Integer objectTemplatePropsId)
+    public void setTemplateId(Integer objectTemplatePropsId)
     {
-	this.objectTemplateId = objectTemplatePropsId;
+	this.templateId = objectTemplatePropsId;
     }
 
-    public void setObjectUpdatedAt(Date objectUpdatedAt)
+    public void setUpdatedAt(Date objectUpdatedAt)
     {
-	this.objectUpdatedAt = objectUpdatedAt;
+	this.updatedAt = objectUpdatedAt;
     }
 }

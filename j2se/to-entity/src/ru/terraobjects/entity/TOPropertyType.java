@@ -13,27 +13,27 @@ public class TOPropertyType
     public static final int TYPE_TEXT = 4;
     public static final int TYPE_DATE = 5;
     public static final int TYPE_LIST = 6;
-    private Integer propTypeId;
-    private String propTypeName;
+    private Integer id;
+    private String name;
 
     public String getPropTypeName()
     {
-        return propTypeName;
+        return name;
     }
 
     public void setPropTypeName(String propTypeName)
     {
-        this.propTypeName = propTypeName;
+        this.name = propTypeName;
     }
 
     public Integer getPropTypeId()
     {
-        return propTypeId;
+        return id;
     }
 
     public TOPropertyType()
     {
-        propTypeId = 0;
-        propTypeName = "";
+        id = 0;
+        name = "";
     }
 }
