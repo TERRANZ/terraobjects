@@ -11,6 +11,7 @@ import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.dao.TOObjectsHelper;
 import ru.terraobjects.entity.dao.TOObjectsManager;
 //import ru.terraobjects.entity.dao.TOPropertiesManager;
+import ru.terraobjects.entity.dao.TOPropertiesManager;
 import ru.terraobjects.solutions.Opcodes;
 import ru.terraobjects.solutions.Solution;
 import ru.terraobjects.solutions.annotation.ASolution;
@@ -27,7 +28,7 @@ public class HashScanSolution implements Solution
     private DataInputStream in = null;
     private DataOutputStream out = null;
     private TOObjectsManager objectsManager;
-    //private TOPropertiesManager propsManager;
+    private TOPropertiesManager propsManager;
     private TOObjectsHelper objectsHelper;
 
     public HashScanSolution()
@@ -40,7 +41,7 @@ public class HashScanSolution implements Solution
         this.in = new DataInputStream(in);
         this.out = new DataOutputStream(out);
         objectsManager = new TOObjectsManager(conn);
-        //propsManager = new TOPropertiesManager(conn);
+        propsManager = new TOPropertiesManager(conn);
         objectsHelper = new TOObjectsHelper(conn);
     }
 
@@ -57,14 +58,14 @@ public class HashScanSolution implements Solution
                 {
                     String filename = in.readUTF();
                     String hash = in.readUTF();
-//                    Integer newobjId = objectsManager.createNewObject(2).getId();
+                    Integer newobjId = objectsManager.createNewObject(2).getId();
 //                    //System.out.println("newobjId "+String.valueOf(newobjId));
-//                    objectsManager.createNewPropertyWithValue(newobjId, 1, filename, 1);
-//                    objectsManager.createNewPropertyWithValue(newobjId, 3, hash, 1);
-                    HashObject ho = new HashObject();
-                    ho.setFileName(filename);
-                    ho.setHash(hash);
-                    objectsHelper.storeObject(ho);
+                    propsManager.createNewPropertyWithValue(newobjId, 1, filename, 1);
+                    propsManager.createNewPropertyWithValue(newobjId, 3, hash, 1);
+//                    HashObject ho = new HashObject();
+//                    ho.setFileName(filename);
+//                    ho.setHash(hash);
+//                    objectsHelper.storeObject(ho);
                 }
                 break;
                 case Opcodes.C_OPCODE_END:
