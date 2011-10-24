@@ -1,5 +1,7 @@
 package ru.terraobjects.solutions.impl.terrastore;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * @author korostelev
@@ -214,12 +216,12 @@ public class TypeConverter
     }
 
     /* ========================= */
-    public static byte[] toByta(String data)
+    public static byte[] toByta(String data) throws UnsupportedEncodingException
     {
-        return (data == null) ? null : data.getBytes();
+        return (data == null) ? null : data.getBytes("UTF-8");
     }
 
-    public static byte[] toByta(String[] data)
+    public static byte[] toByta(String[] data) throws UnsupportedEncodingException
     {
         // Advanced Technique: Generates an indexed byte array
         // which contains the array of Strings. The byte array

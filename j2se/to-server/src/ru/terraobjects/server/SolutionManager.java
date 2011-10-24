@@ -72,14 +72,14 @@ public class SolutionManager
             for (String cn : classesScanned)
             {
                 cn = cn.replace("/", ".");
-                System.out.println("Founded class " + cn);
+                //System.out.println("Founded class " + cn);
 
                 if (cn.contains(SOLUTIONS_CLASS_PATH))
                 {
-                    System.out.println("Founded class " + cn);
+                    //System.out.println("Founded class " + cn);
 
                     //Ок, наш клиент
-                    System.out.println("Ok, found " + cn + " loading it");
+                    //System.out.println("Ok, found " + cn + " loading it");
                     try
                     {
                         Solution newClass = (Solution) Class.forName(cn).newInstance();
@@ -110,11 +110,11 @@ public class SolutionManager
 
     public List<Solution> getSolutions()
     {
-        //return solutions;
-        ArrayList<Solution> sols = new ArrayList<Solution>();
-        sols.add(new HashScanSolution());
-        sols.add(new TerraStoreSolution());
-        return sols;
+        return solutions;
+//        ArrayList<Solution> sols = new ArrayList<Solution>();
+//        sols.add(new HashScanSolution());
+//        sols.add(new TerraStoreSolution());
+//        return sols;
     }
 
     /**

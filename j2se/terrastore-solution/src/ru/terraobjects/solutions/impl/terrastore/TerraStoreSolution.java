@@ -54,14 +54,13 @@ public class TerraStoreSolution implements Solution
     {
         try
         {
-//            byte[] buff = new byte[4];
-//            int read = in.read(buff);
             Integer opCode = in.readInt();
+            ServerNetworkPacket packet = null;
             switch (opCode)
             {
-
                 case ClientOpcodes.LOGIN:
                 {
+
                     int len = in.readInt() + 4;
                     byte[] buf = new byte[in.available()];
                     in.read(buf);
@@ -70,13 +69,13 @@ public class TerraStoreSolution implements Solution
                     checkPassword(password);
                     if (!isLoggedIn())
                     {
-                        sendInt(ServerOpcodes.LOGIN_FAILED);
-                        sendInt(ServerOpcodes.BYE);
+                        packet = new ServerNetworkPacket(ServerOpcodes.LOGIN_FAILED);
+                        packet.putInt(ServerOpcodes.BYE);
                         return true;
                     } else
                     {
-                        sendInt(ServerOpcodes.LOGIN_OK);
-                        sendInt(level);
+                        packet = new ServerNetworkPacket(ServerOpcodes.LOGIN_OK);
+                        packet.putInt(level);
                         clientState = ClientState.LOGGED_IN;
                         changeClientState(ClientState.LOGGED_IN);
                     }
@@ -87,36 +86,29 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.LOGGED_IN)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
                         //отсылаем список доступных темплейтов
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
-                        sendInt(ServerOpcodes.AVAIL_OBJECTS);
-                        sendInt(17);
+                        packet = new ServerNetworkPacket(ServerOpcodes.AVAIL_OBJECTS);
+                        packet.putInt(17);
                         for (int i = 3; i <= 20; i++)
                         {
-                            out.writeInt(i);
+                            packet.putInt(i);
                         }
-                        sendInt(ServerOpcodes.OK);
+                        packet.putInt(ServerOpcodes.OK);
                     }
                 }
                 break;
 
                 case ClientOpcodes.READY:
                 {
-//                    if (clientState != ClientState.WORKING)
-//                    {
-//                        sendInt(ServerOpcodes.BYE);
-//                        return true;
-//                    } else
-//                    {
-                    sendInt(ServerOpcodes.OK);
+                    packet = new ServerNetworkPacket(ServerOpcodes.OK);
                     clientState = ClientState.READY;
                     changeClientState(ClientState.READY);
-                    //}
                 }
                 break;
 
@@ -124,24 +116,25 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
+                        System.out.println("GetObjects received");
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
 
-                        sendInt(ServerOpcodes.OBJECTS);
+                        packet = new ServerNetworkPacket(ServerOpcodes.OBJECTS);
                         Integer templateId = in.readInt();
+                        System.out.println("TemplateId : " + String.valueOf(templateId));
                         List<TOObject> objects = objectsManager.getAllObjsByTemplId(templateId);
-                        sendInt(objects.size());
+                        packet.putInt(templateId);
+                        packet.putInt(objects.size());
                         for (TOObject obj : objects)
                         {
-                            sendObject(obj);
+                            setObject(obj, packet);
                         }
-                        sendInt(ServerOpcodes.OK);
-                        clientState = ClientState.READY;
-                        changeClientState(ClientState.READY);
+                        packet.putInt(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -150,21 +143,21 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
                         clientState = ClientState.WORKING;
                         changeClientState(ClientState.WORKING);
-                        sendInt(ServerOpcodes.OBJECT);
+                        packet = new ServerNetworkPacket(ServerOpcodes.OBJECT);
                         Integer objId = in.readInt();
                         TOObject retObj = objectsManager.getObject(objId);
                         if (retObj != null)
                         {
-                            sendObject(retObj);
+                            setObject(retObj, packet);
                         } else
                         {
-                            sendInt(ServerOpcodes.ERR);
+                            packet = new ServerNetworkPacket(ServerOpcodes.ERR);
                         }
                     }
                 }
@@ -174,7 +167,7 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
@@ -184,7 +177,7 @@ public class TerraStoreSolution implements Solution
                         newObj.setParentId(parentId);
                         Integer newObjId = newObj.getId();
                         propsManager.createDefaultPropsForObject(templateId, newObjId);
-                        sendInt(ServerOpcodes.OK);
+                        packet = new ServerNetworkPacket(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -193,15 +186,15 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
                         Integer objId = in.readInt();
                         Integer propId = in.readInt();
                         Integer propType = in.readInt();
-                        setPropVal(objId, propId, propType);
-                        sendInt(ServerOpcodes.OK);
+                        //setPropVal(objId, propId, propType);
+                        packet = new ServerNetworkPacket(ServerOpcodes.OK);
                     }
                 }
                 break;
@@ -210,7 +203,7 @@ public class TerraStoreSolution implements Solution
                 {
                     if (clientState != ClientState.READY)
                     {
-                        sendInt(ServerOpcodes.BYE);
+                        packet = makeBye();
                         return true;
                     } else
                     {
@@ -220,25 +213,26 @@ public class TerraStoreSolution implements Solution
                             Integer objId = in.readInt();
                             Integer propId = in.readInt();
                             Integer propType = in.readInt();
-                            setPropVal(objId, propId, propType);
+                            //setPropVal(objId, propId, propType);
                         }
-                        sendInt(ServerOpcodes.OK);
+                        packet = new ServerNetworkPacket(ServerOpcodes.OK);
                     }
                 }
                 break;
 
                 case ClientOpcodes.QUIT:
                 {
-                    sendInt(ServerOpcodes.BYE);
+                    packet = makeBye();
                     return true;
                 }
                 default:
                 {
-                    sendInt(ServerOpcodes.ERR);
-                    sendInt(ServerOpcodes.BYE);
+                    packet = makeBye();
+                    packet.putInt(ServerOpcodes.BYE);
                     return true;
                 }
             }
+            out.write(packet.getPacket());
         } catch (IOException ex)
         {
             //Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
@@ -320,39 +314,22 @@ public class TerraStoreSolution implements Solution
         propsManager.setPropertyValue(objId, propId, val, propType);
     }
 
-    private void sendBuf(byte[] buf)
+    private void setObject(TOObject obj, ServerNetworkPacket packet) throws UnsupportedEncodingException, IOException
     {
-        try
-        {
-            out.write(buf);
-            out.flush();
-        } catch (IOException ex)
-        {
-            Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        packet.putInt(obj.getId());
+        packet.putInt(obj.getParentId());
+        setObjectProps(obj.getId(), packet);
     }
 
-    private void sendInt(int val)
-    {
-        sendBuf(TypeConverter.toByta(val));
-    }
-
-    private void sendObject(TOObject obj) throws UnsupportedEncodingException, IOException
-    {
-        sendInt(obj.getId());
-        sendInt(obj.getParentId());
-        sendObjectProps(obj.getId());
-    }
-
-    private void sendObjectProps(Integer objId) throws UnsupportedEncodingException, IOException
+    private void setObjectProps(Integer objId, ServerNetworkPacket packet) throws UnsupportedEncodingException, IOException
     {
         List<TOObjectProperty> objProps = propsManager.getObjPropsForObjId(objId);
-        sendInt(objProps.size());
+        packet.putInt(objProps.size());
         for (TOObjectProperty objProp : objProps)
         {
-            sendInt(objProp.getId());
+            packet.putInt(objProp.getId());
             Integer propType = propsManager.getPropertyType(objProp.getPropertyId()).getPropTypeId();
-            sendInt(propType);
+            packet.putInt(propType);
             byte[] outbytes = new byte[]
             {
             };
@@ -385,8 +362,13 @@ public class TerraStoreSolution implements Solution
                 }
                 break;
             }
-            sendInt(outbytes.length);
-            sendBuf(outbytes);
+            packet.putInt(outbytes.length);
+            packet.putBuf(outbytes);
         }
+    }
+
+    private ServerNetworkPacket makeBye()
+    {
+        return new ServerNetworkPacket(ServerOpcodes.BYE);
     }
 }
