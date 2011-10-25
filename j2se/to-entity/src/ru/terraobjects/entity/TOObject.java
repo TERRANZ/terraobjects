@@ -13,7 +13,7 @@ public class TOObject
 {
 
     private Integer id;
-    private Integer parentId;
+    private Integer parentId = 0;
     private Integer templateId;
     private Date createdAt;
     private Date updatedAt;

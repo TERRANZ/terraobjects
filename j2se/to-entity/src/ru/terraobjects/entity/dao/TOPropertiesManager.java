@@ -40,6 +40,11 @@ public class TOPropertiesManager
         return persist.readList(TOProperty.class, DAOConsts.SELECT_ALL_PROPERTIES);
     }
 
+    public TOProperty getProperty(Integer propId)
+    {
+        return persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, propId);
+    }
+
     public List<TOObjectProperty> getObjPropsForObjId(Integer oid)
     {
         return persist.readList(TOObjectProperty.class, DAOConsts.SELECT_OBJECT_PROPS_BY_OBJECT_ID, oid);

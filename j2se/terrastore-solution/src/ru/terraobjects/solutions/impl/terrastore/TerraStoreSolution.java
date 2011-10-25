@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.TOObjectProperty;
+import ru.terraobjects.entity.TOProperty;
 import ru.terraobjects.entity.TOPropertyType;
 import ru.terraobjects.entity.dao.TOObjectsManager;
 import ru.terraobjects.entity.dao.TOPropertiesManager;
@@ -317,7 +318,13 @@ public class TerraStoreSolution implements Solution
     private void setObject(TOObject obj, ServerNetworkPacket packet) throws UnsupportedEncodingException, IOException
     {
         packet.putInt(obj.getId());
-        packet.putInt(obj.getParentId());
+        if (obj.getParentId() != null)
+        {
+            packet.putInt(obj.getParentId());
+        } else
+        {
+            packet.putInt(0);
+        }
         setObjectProps(obj.getId(), packet);
     }
 
@@ -328,7 +335,7 @@ public class TerraStoreSolution implements Solution
         for (TOObjectProperty objProp : objProps)
         {
             packet.putInt(objProp.getId());
-            Integer propType = propsManager.getPropertyType(objProp.getPropertyId()).getPropTypeId();
+            Integer propType = propsManager.getProperty(objProp.getPropertyId()).getTypeId();
             packet.putInt(propType);
             byte[] outbytes = new byte[]
             {

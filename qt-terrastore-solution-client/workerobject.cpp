@@ -80,7 +80,7 @@ void WorkerObject::readFromSocket()
         quint32 count = sp->readInt();
         emit logSignal("Objects count: " + QString::number(count));
         if (count != 0){
-            for (int i = 0;i<=count;i++)
+            for (int i = 0;i<count;i++)
             {
                 parseObject(sp);
             }
@@ -116,6 +116,7 @@ void WorkerObject::parseObject(ServerPacket *sp)
     emit logSignal("parseObject props count: "+QString::number(count));
     for (int i = 0; i<count;i++)
     {
+        emit logSignal("Parsing iteration: "+QString::number(i));
         quint32 propId = sp->readInt();
         emit logSignal("parseObject propId: "+QString::number(propId));
         quint32 propType = sp->readInt();
@@ -123,9 +124,11 @@ void WorkerObject::parseObject(ServerPacket *sp)
         Property *newProp = new Property(propId,propType);
         quint32 size = sp->readInt();
         emit logSignal("parseObject propsize: "+QString::number(size));
-        QByteArray val = tcpSocket->read(size);
+        QByteArray val = sp->read(size);
         newProp->setVal(val);
         newObj->addProp(newProp);
+        QString strVal = QString::fromUtf8(newProp->getVal().data());
+        emit logSignal("parseObject prop string value: "+strVal);
     }
     objects.append(newObj);
 }
@@ -139,11 +142,13 @@ void WorkerObject::getObjects()
 {
     emit logSignal("Getting objects");
     clientState = CS_PARSING_OBJECT;
-    foreach (quint32 templ,availTemplates){
-        emit logSignal("Getting objects for templateId: "+QString::number(templ));
-        writeInt(COpCodes::GET_OBJECTS);
-        writeInt(templ);
-    }
+    //    foreach (quint32 templ,availTemplates){
+    quint32 templ = 9;
+    emit logSignal("Getting objects for templateId: "+QString::number(templ));
+    writeInt(COpCodes::GET_OBJECTS);
+    writeInt(templ);
+    //    }
+
 }
 
 void WorkerObject::writeInt(quint32 val)

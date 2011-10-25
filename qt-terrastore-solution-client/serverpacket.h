@@ -9,7 +9,8 @@ public:
     ServerPacket(QByteArray arr);
     quint32 getOpCode() {return opCode;}
     quint32 getSize() {return size;}
-    qint32 readInt();
+    quint32 readInt();
+    QByteArray read(quint32 size);
 
 private:
     quint32 size, opCode;

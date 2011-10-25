@@ -84,6 +84,7 @@ public class ServerThread implements Runnable
                 {
                     System.out.println("Client disconnected");
                     serverSocket.close();
+                    e.printStackTrace();
                     return;
                 }
             }
