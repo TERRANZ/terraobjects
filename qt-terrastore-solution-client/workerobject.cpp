@@ -128,7 +128,7 @@ void WorkerObject::parseObject(ServerPacket *sp)
         newProp->setVal(val);
         newObj->addProp(newProp);
         QString strVal = QString::fromUtf8(newProp->getVal().data());
-        emit logSignal("parseObject prop string value: "+strVal);
+        emit logSignal("parseObject prop string value: "+strVal.toUtf8());
     }
     objects.append(newObj);
 }
@@ -143,7 +143,7 @@ void WorkerObject::getObjects()
     emit logSignal("Getting objects");
     clientState = CS_PARSING_OBJECT;
     //    foreach (quint32 templ,availTemplates){
-    quint32 templ = 9;
+    quint32 templ = 2;
     emit logSignal("Getting objects for templateId: "+QString::number(templ));
     writeInt(COpCodes::GET_OBJECTS);
     writeInt(templ);

@@ -11,6 +11,8 @@ public:
     quint32 getSize() {return size;}
     quint32 readInt();
     QByteArray read(quint32 size);
+    qlonglong readLong();
+    qreal readFloat();
 
 private:
     quint32 size, opCode;
