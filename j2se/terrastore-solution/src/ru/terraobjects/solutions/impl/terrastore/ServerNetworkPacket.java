@@ -1,5 +1,8 @@
 package ru.terraobjects.solutions.impl.terrastore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -13,8 +16,10 @@ import java.util.logging.Logger;
 public class ServerNetworkPacket implements Serializable
 {
 
-    private static final int MAX_PACKET_SIZE = 255;
-    ByteBuffer buffer = ByteBuffer.allocate(MAX_PACKET_SIZE);
+//    private static final int MAX_PACKET_SIZE = 255;
+//    ByteBuffer buffer = ByteBuffer.allocate(MAX_PACKET_SIZE);
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    DataOutputStream dos = new DataOutputStream(stream);
     int opCode = 0;
 
     public ServerNetworkPacket(int opcode)
@@ -35,41 +40,42 @@ public class ServerNetworkPacket implements Serializable
 
     public byte[] getPacket()
     {
-        ByteBuffer outBuf = ByteBuffer.allocate(MAX_PACKET_SIZE);
+        ByteBuffer outBuf = ByteBuffer.allocate(dos.size() + 10);
         outBuf.putInt(opCode);
-        outBuf.putInt(buffer.array().length + 8);
-        outBuf.put(buffer);
+        outBuf.putInt(dos.size() + 8);
+        outBuf.put(stream.toByteArray());
         return outBuf.array();
     }
 
-    public void putInt(int val)
+    public void putInt(int val) throws IOException
     {
-        buffer.putInt(val);
+        // buffer.putInt(val);
+        dos.write(TypeConverter.toByta(val));
     }
 
-    public void putFloat(float val)
+    public void putFloat(float val) throws IOException
     {
-        buffer.putFloat(val);
+        dos.write(TypeConverter.toByta(val));
     }
 
-    public void putLong(long val)
+    public void putLong(long val) throws IOException
     {
-        buffer.putLong(val);
+        dos.write(TypeConverter.toByta(val));
     }
 
-    public void putString(String val)
+    public void putString(String val) throws IOException
     {
         try
         {
-            buffer.put(TypeConverter.toByta(val));
+            dos.write(TypeConverter.toByta(val));
         } catch (UnsupportedEncodingException ex)
         {
             Logger.getLogger(ServerNetworkPacket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void putBuf(byte[] buf)
+    public void putBuf(byte[] buf) throws IOException
     {
-        buffer.put(buf);
+        dos.write(buf);
     }
 }

@@ -10,8 +10,6 @@ import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.TOPropertyType;
@@ -232,7 +230,9 @@ public class TerraStoreSolution implements Solution
                     return true;
                 }
             }
-            out.write(packet.getPacket());
+            out.write(packet.getPacket(), 0, packet.getPacket().length);
+            out.flush();
+            System.out.println("Size of written: " + packet.getPacket().length);
         } catch (IOException ex)
         {
             //Logger.getLogger(TerraStoreSolution.class.getName()).log(Level.SEVERE, null, ex);

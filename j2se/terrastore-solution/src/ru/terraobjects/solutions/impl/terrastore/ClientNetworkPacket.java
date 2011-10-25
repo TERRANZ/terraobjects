@@ -11,11 +11,18 @@ public class ClientNetworkPacket
 
     private ByteBuffer buffer;
     private int opCode = 0;
+    private int packetSize = 0;
 
     public ClientNetworkPacket(byte[] buf)
     {
         buffer = ByteBuffer.wrap(buf);
         this.opCode = buffer.getInt();
+        this.packetSize = buffer.getInt();
+    }
+
+    public int getPacketSize()
+    {
+        return packetSize;
     }
 
     public int getOpcode()
