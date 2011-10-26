@@ -10,6 +10,7 @@
 #include "SOpCodes.h"
 #include "object.h"
 #include "serverpacket.h"
+#include "clientpacket.h"
 
 class WorkerObject : public QObject
 {
@@ -38,7 +39,7 @@ private:
     ClientState clientState;
     InnerState innerState;
 
-    void writeInt(quint32 val);
+    void sendToClient(QByteArray arr);
     void parseObjects();
     void parseObject(ServerPacket *sp);
     Property* parseObjectProps();

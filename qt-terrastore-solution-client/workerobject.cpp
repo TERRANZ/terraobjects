@@ -19,14 +19,11 @@ void WorkerObject::startLogin(QString pass)
 {
     emit logSignal("Start logging in");
     clientState = CS_LOGIN;
-    writeInt(COpCodes::LOGIN);
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    QByteArray baPass = pass.toUtf8();
-    out << baPass.data();
-    writeInt(baPass.size());
-    tcpSocket->write(block);
+    ClientPacket *cp = new ClientPacket();
+    cp->setOpCode(COpCodes::LOGIN);
+    cp->putString(pass);
+    sendToClient(cp->getData());
 }
 
 void WorkerObject::readFromSocket()
@@ -43,6 +40,7 @@ void WorkerObject::readFromSocket()
     case SOpCodes::OK:
     {
         emit logSignal("Server said: OK");
+        emit logSignal("ParsedObjects: "+QString::number(parsedObjects));
     }break;
 
     case SOpCodes::LOGIN_OK:
@@ -50,7 +48,10 @@ void WorkerObject::readFromSocket()
         emit logSignal("Logged in");
         quint32 level = sp->readInt();
         emit logSignal("Level is: " + QString::number(level));
-        writeInt(COpCodes::GET_AVAIL_OBJECTS);
+        //writeInt(COpCodes::GET_AVAIL_OBJECTS);
+        ClientPacket *cp = new ClientPacket();
+        cp->setOpCode(COpCodes::GET_AVAIL_OBJECTS);
+        sendToClient(cp->getData());
     }break;
 
     case SOpCodes::AVAIL_OBJECTS:
@@ -64,7 +65,9 @@ void WorkerObject::readFromSocket()
             emit logSignal("Template received: " + QString::number(templateId));
             availTemplates.append(templateId);
         }
-        writeInt(COpCodes::READY);
+        ClientPacket *cp = new ClientPacket();
+        cp->setOpCode(COpCodes::READY);
+        sendToClient(cp->getData());
     }break;
 
     case SOpCodes::LOGIN_FAILED:
@@ -88,21 +91,13 @@ void WorkerObject::readFromSocket()
         {
             emit logSignal("Objects count is zero");
         }
+        emit logSignal("ParsedObjects: "+QString::number(parsedObjects));
+        ClientPacket *cp = new ClientPacket();
+        cp->setOpCode(COpCodes::READY);
+        sendToClient(cp->getData());
     }break;
 
     }
-}
-
-void WorkerObject::parseObjects()
-{
-    //    emit logSignal("parseObjects()");
-    //    quint32 count = readInt();
-    //    emit logSignal("parseObjects count: "+QString::number(count));
-
-    //    for (int i = 0;i<count;i++)
-    //    {
-    //        parseObject();
-    //    }
 }
 
 void WorkerObject::parseObject(ServerPacket *sp)
@@ -114,6 +109,7 @@ void WorkerObject::parseObject(ServerPacket *sp)
     Object *newObj = new Object(objId,parentId);
     quint32 count = sp->readInt();
     emit logSignal("parseObject props count: "+QString::number(count));
+    parsedObjects++;
     for (int i = 0; i<count;i++)
     {
         emit logSignal("Parsing iteration: "+QString::number(i));
@@ -135,28 +131,29 @@ void WorkerObject::parseObject(ServerPacket *sp)
 
 Property* WorkerObject::parseObjectProps()
 {
-
+    return NULL;
 }
 
 void WorkerObject::getObjects()
 {
+    parsedObjects = 0;
     emit logSignal("Getting objects");
     clientState = CS_PARSING_OBJECT;
     //    foreach (quint32 templ,availTemplates){
     quint32 templ = 2;
     emit logSignal("Getting objects for templateId: "+QString::number(templ));
-    writeInt(COpCodes::GET_OBJECTS);
-    writeInt(templ);
+    ClientPacket *cp = new ClientPacket();
+    cp->setOpCode(COpCodes::GET_OBJECTS);
+    cp->putInt(templ);
+    sendToClient(cp->getData());
     //    }
-
 }
 
-void WorkerObject::writeInt(quint32 val)
+void WorkerObject::sendToClient(QByteArray arr)
 {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << val;
-    tcpSocket->write(block);
+    //    QDataStream out(&arr,QIODevice::ReadOnly);
+    emit logSignal("Sending to client: "+QString::number(arr.size()));
+    tcpSocket->write(arr);
 }
 
 void WorkerObject::displayError(QAbstractSocket::SocketError socketError)

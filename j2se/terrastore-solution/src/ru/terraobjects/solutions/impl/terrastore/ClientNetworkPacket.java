@@ -51,4 +51,11 @@ public class ClientNetworkPacket
         buffer.get(tmpBuf);
         return TypeConverter.toString(tmpBuf);
     }
+
+    public String getString()
+    {
+        byte[] tmpBuf = new byte[buffer.getInt()];
+        buffer.get(tmpBuf);
+        return TypeConverter.toString(tmpBuf);
+    }
 }

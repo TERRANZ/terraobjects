@@ -110,11 +110,11 @@ public class SolutionManager
 
     public List<Solution> getSolutions()
     {
-        return solutions;
-//        ArrayList<Solution> sols = new ArrayList<Solution>();
-//        sols.add(new HashScanSolution());
-//        sols.add(new TerraStoreSolution());
-//        return sols;
+//        return solutions;
+        ArrayList<Solution> sols = new ArrayList<Solution>();
+        sols.add(new HashScanSolution());
+        sols.add(new TerraStoreSolution());
+        return sols;
     }
 
     /**
