@@ -14,6 +14,7 @@ public class TOProperty
     private Integer id;
     private Integer typeId;
     private String defValue;
+    private String name;
 
     @Column(name = "prop_defvalue")
     public String getDefValue()
@@ -47,4 +48,17 @@ public class TOProperty
     {
         this.typeId = propTypeId;
     }
+
+    @Column(name = "prop_name")
+    public String getName()
+    {
+	return name;
+    }
+
+    public void setName(String name)
+    {
+	this.name = name;
+    }
+
+
 }
