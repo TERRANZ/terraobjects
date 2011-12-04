@@ -25,6 +25,8 @@ public interface DAOConsts
     public final static String SELECT_ALL_OBJECT_TEMPLATE = "select * from object_template";
     public final static String SELECT_OBJECT_TEMPLATE_BY_ID = "select * from object_template where "
 	    + "object_template_id = ?";
+    public final static String SELECT_OBJECT_TEMPLATES_BY_PARENT_ID = "select * from object_template where"
+	    + "parent_object_template_id = ?";
     public final static String SELECT_OBJECT_PROPS_BY_OBJECT_ID = "select * from object_props where object_id = ?";
     public final static String SELECT_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID =
 	    "select * from object_props where object_id = ? AND prop_id = ?";
@@ -43,5 +45,6 @@ public interface DAOConsts
 	    "delete from object_props where object_id = ? AND prop_id = ?";
     public final static String CREATE_PROPS_FOR_OBJECT = "call create_obj_prop(? , ?)";
     public final static String SELECT_OBJPROP_LIST_BY_LISTPROP_ID = "select object_id from object_prop_list "
-	    + "where list_id = ?";    
+	    + "where list_id = ?";
+    public final static String REMOVE_OBJECT_TEMPLATE_BY_ID = "delete from object_template where id = ?";
 }

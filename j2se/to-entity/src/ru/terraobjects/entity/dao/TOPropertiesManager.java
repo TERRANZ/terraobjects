@@ -8,7 +8,9 @@ import java.util.List;
 import java.sql.Connection;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -245,7 +247,7 @@ public class TOPropertiesManager
 	throw new RuntimeException("Object " + oid + " doesn't have property " + pid);
     }
 
-    public void createNewPropertyWithValue(Integer oid, Integer propid, Object value, Integer type)
+    public void createNewObjectPropertyWithValue(Integer oid, Integer propid, Object value, Integer type)
     {
 	TOObjectProperty newProp = new TOObjectProperty();
 	newProp.setObjectId(oid);
@@ -290,6 +292,11 @@ public class TOPropertiesManager
     public void setPropertyValue(Integer oid, Integer propid, Object value)
     {
 	TOObjectProperty property = getObjectProperty(oid, propid);
+	if (property == null)
+	{
+	    //throw new RuntimeException("Can't set property: " + propid);
+	    createNewObjectPropertyWithValue(oid, propid, value, TOPropertyType.TYPE_STR);
+	}
 	TOProperty prop = EntityCache.getInstance().getPropertyFromCache(property.getPropertyId());
 	if (prop == null)
 	{
@@ -333,7 +340,7 @@ public class TOPropertiesManager
 	persist.update(property);
     }
 
-    public void setPropertyValue(Integer oid, Integer propid, Object value, Integer type)
+    public void setObjectPropertyValue(Integer oid, Integer propid, Object value, Integer type)
     {
 	TOObjectProperty property = getObjectProperty(oid, propid);
 	switch (type)
@@ -370,5 +377,47 @@ public class TOPropertiesManager
 	    break;
 	}
 	persist.update(property);
+    }
+
+    public TOProperty createNewProperty(Integer type, String defVal, String name)
+    {
+	TOProperty newProp = new TOProperty();
+	newProp.setTypeId(type);
+	newProp.setDefValue(defVal);
+	newProp.setId(0);
+	newProp.setName(name);
+	int added = 0;
+	PreparedStatement st = null;
+	try
+	{
+	    //persist.insert(newobj);
+	    st = conn.prepareStatement("insert into property values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	    st.setInt(1, 0);
+	    st.setInt(2, type);
+	    st.setString(3, defVal);
+	    st.setString(4, name);
+	    st.execute();
+	    ResultSet rs = st.getGeneratedKeys();
+	    if (rs.last())
+	    {
+		added = rs.getInt(1);
+	    }
+	} catch (SQLException ex)
+	{
+	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	} finally
+	{
+	    try
+	    {
+		st.close();
+	    } catch (SQLException ex)
+	    {
+		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	}
+
+	//createDefaultPropsForObject(templateId, added);
+	newProp.setId(added);
+	return newProp;
     }
 }

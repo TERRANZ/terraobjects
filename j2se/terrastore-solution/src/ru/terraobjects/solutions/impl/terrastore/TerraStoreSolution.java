@@ -345,7 +345,7 @@ public class TerraStoreSolution implements Solution
             }
             break;
         }
-        propsManager.setPropertyValue(objId, propId, val, propType);
+        propsManager.setObjectPropertyValue(objId, propId, val, propType);
     }
 
     private void setObject(TOObject obj, ServerNetworkPacket packet) throws UnsupportedEncodingException, IOException

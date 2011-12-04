@@ -1,5 +1,6 @@
 package ru.terraobjects.entity;
 
+import net.sf.persist.annotations.Column;
 import net.sf.persist.annotations.Table;
 
 /**
@@ -14,33 +15,36 @@ public class TOObjectTemplate
     private String name;
     private Integer parentId;
 
+    @Column(name = "parent_object_template_id")
     public Integer getParentId()
     {
-        return parentId;
+	return parentId;
     }
 
     public void setParentId(Integer ParentObjectTemplateId)
     {
-        this.parentId = ParentObjectTemplateId;
+	this.parentId = ParentObjectTemplateId;
     }
 
+    @Column(name = "object_template_id")
     public Integer getId()
     {
-        return id;
+	return id;
     }
 
     public void setId(Integer ObjectTemplateId)
     {
-        this.id = ObjectTemplateId;
+	this.id = ObjectTemplateId;
     }
 
+    @Column(name = "Object_Template_Name")
     public String getName()
     {
-        return name;
+	return name;
     }
 
     public void setName(String ObjectTemplateName)
     {
-        this.name = ObjectTemplateName;
+	this.name = ObjectTemplateName;
     }
 }

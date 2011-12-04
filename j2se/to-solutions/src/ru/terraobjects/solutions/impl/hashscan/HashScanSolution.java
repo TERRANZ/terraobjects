@@ -60,8 +60,8 @@ public class HashScanSolution implements Solution
                     String hash = in.readUTF();
                     Integer newobjId = objectsManager.createNewObject(2).getId();
 //                    //System.out.println("newobjId "+String.valueOf(newobjId));
-                    propsManager.createNewPropertyWithValue(newobjId, 1, filename, 1);
-                    propsManager.createNewPropertyWithValue(newobjId, 3, hash, 1);
+                    propsManager.createNewObjectPropertyWithValue(newobjId, 1, filename, 1);
+                    propsManager.createNewObjectPropertyWithValue(newobjId, 3, hash, 1);
 //                    HashObject ho = new HashObject();
 //                    ho.setFileName(filename);
 //                    ho.setHash(hash);
