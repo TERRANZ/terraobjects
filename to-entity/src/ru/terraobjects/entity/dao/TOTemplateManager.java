@@ -198,4 +198,9 @@ public class TOTemplateManager
     {
 	return persist.read(TOObjectTemplateProperty.class, DAOConsts.SELECT_OBJECT_TEMPLATE_PROPS_BY_ID, propId);
     }
+
+    public List<TOObjectTemplateProperty> getObjectTemplatePropsByTemplate(Integer templateId)
+    {
+	return persist.readList(TOObjectTemplateProperty.class,DAOConsts.SELECT_OBJECT_TEMPLATE_PROPS_BY_TEMPLATE_ID,templateId);
+    }
 }

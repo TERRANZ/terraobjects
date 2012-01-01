@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.persist.*;
 import ru.terraobjects.entity.TOObjectProperty;
+import ru.terraobjects.entity.TOObjectTemplateProperty;
 import ru.terraobjects.entity.TOProperty;
 import ru.terraobjects.entity.TOPropertyType;
 
@@ -168,30 +169,37 @@ public class TOPropertiesManager
 	return persist.readList(Integer.class, DAOConsts.SELECT_OBJPROP_LIST_BY_LISTPROP_ID, listPropId);
     }
 
-    public void createDefaultPropsForObject(Integer templateId, Integer oid)
+    public void createDefaultPropsForObject(Integer templateId, Integer oid, Boolean storedProc)
     {
-//        persist.executeUpdate(DAOConsts.CREATE_PROPS_FOR_OBJECT, new Object[]
-//                {
-//                    templateId, oid
-//                });
-	PreparedStatement st = null;
-	try
+	if (storedProc)
 	{
-	    st = conn.prepareStatement(DAOConsts.CREATE_PROPS_FOR_OBJECT);
-	    st.setInt(1, templateId);
-	    st.setInt(2, oid);
-	    st.execute();
-	} catch (SQLException ex)
-	{
-	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
-	} finally
-	{
+	    PreparedStatement st = null;
 	    try
 	    {
-		st.close();
+		st = conn.prepareStatement(DAOConsts.CREATE_PROPS_FOR_OBJECT);
+		st.setInt(1, templateId);
+		st.setInt(2, oid);
+		st.execute();
 	    } catch (SQLException ex)
 	    {
 		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+	    } finally
+	    {
+		try
+		{
+		    st.close();
+		} catch (SQLException ex)
+		{
+		    Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	    }
+	} else
+	{
+	    TOTemplateManager tManager = new TOTemplateManager(conn);
+	    List<TOObjectTemplateProperty> props = tManager.getObjectTemplatePropsByTemplate(templateId);
+	    for (TOObjectTemplateProperty prop : props)
+	    {
+		createNewObjectPropertyWithValue(oid, prop.getId(), "", TOPropertyType.TYPE_STR);
 	    }
 	}
     }
@@ -404,7 +412,7 @@ public class TOPropertiesManager
 	    }
 	} catch (SQLException ex)
 	{
-	    Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
 	} finally
 	{
 	    try
@@ -412,7 +420,7 @@ public class TOPropertiesManager
 		st.close();
 	    } catch (SQLException ex)
 	    {
-		Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
+		Logger.getLogger(TOPropertiesManager.class.getName()).log(Level.SEVERE, null, ex);
 	    }
 	}
 

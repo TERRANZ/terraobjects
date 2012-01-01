@@ -3,8 +3,11 @@ package ru.terraobjects.entity.dao;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.annotations.PropGetter;
 import ru.terraobjects.entity.annotations.PropSetter;
 import ru.terraobjects.entity.annotations.TemplateId;
@@ -21,6 +24,27 @@ public class TOObjectsHelper
     public TOObjectsHelper(Connection conn)
     {
 	this.conn = conn;
+    }
+
+    public List<Object> loadObjects(Class objectClass)
+    {
+	TOObjectsManager objectsManager = new TOObjectsManager(conn);
+	Object retObj = null;
+	if (objectClass.isAnnotationPresent(TemplateId.class))
+	{
+	    Integer tId = new Integer(((TemplateId) (objectClass.getAnnotation(TemplateId.class))).id());
+	    if (tId != null)
+	    {
+		List<TOObject> objects = objectsManager.getAllObjsByTemplId(tId);
+		ArrayList<Object> ret = new ArrayList<Object>();
+		for (TOObject o : objects)
+		{
+		    ret.add(loadObject(objectClass, o.getId()));
+		}
+		return ret;
+	    }
+	}
+	throw new RuntimeException("Can't load objects from DB");
     }
 
     public Object loadObject(Class objectClass, Integer objectId)
@@ -68,7 +92,7 @@ public class TOObjectsHelper
 	return retObj;
     }
 
-    public Integer storeObject(Object objToStore)
+    public Integer storeObject(Object objToStore, Boolean storedProc)
     {
 	//deconstruct object to props and store it into db
 	Integer retId = null;
@@ -80,7 +104,7 @@ public class TOObjectsHelper
 	{
 	    Integer tId = Integer.valueOf(templateIdAnnotation.id());
 	    retId = objManager.createNewObject(tId).getId();
-	    prosManager.createDefaultPropsForObject(tId, retId);
+	    prosManager.createDefaultPropsForObject(tId, retId, storedProc);
 	    for (Method m : objToStore.getClass().getMethods())
 	    {
 		if (m.isAnnotationPresent(PropGetter.class))
