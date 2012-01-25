@@ -167,4 +167,39 @@ public class TOObjectsHelper
         }
         return retId;
     }
+
+    public void updateObject(Object objToStore, Integer oId)
+    {
+        TOObjectsManager objManager = new TOObjectsManager(conn);
+        TOPropertiesManager prosManager = new TOPropertiesManager(conn);
+        TemplateId templateIdAnnotation = objToStore.getClass().getAnnotation(TemplateId.class);
+        if (templateIdAnnotation != null)
+        {
+            Integer tId = Integer.valueOf(templateIdAnnotation.id());
+            for (Method m : objToStore.getClass().getMethods())
+            {
+                if (m.isAnnotationPresent(PropGetter.class))
+                {
+                    Integer propId = Integer.valueOf(m.getAnnotation(PropGetter.class).id());
+                    Object val = null;
+                    try
+                    {
+                        val = m.invoke(objToStore, new Object[]
+                                {
+                                });
+                    } catch (IllegalAccessException ex)
+                    {
+                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalArgumentException ex)
+                    {
+                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InvocationTargetException ex)
+                    {
+                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    prosManager.setPropertyValue(oId, propId, val);
+                }
+            }
+        }
+    }
 }
