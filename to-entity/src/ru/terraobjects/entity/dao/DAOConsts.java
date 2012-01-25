@@ -47,4 +47,6 @@ public interface DAOConsts
     public final static String SELECT_OBJPROP_LIST_BY_LISTPROP_ID = "select object_id from object_prop_list "
 	    + "where list_id = ?";
     public final static String REMOVE_OBJECT_TEMPLATE_BY_ID = "delete from object_template where id = ?";
+    public final static String SELECT_OBJECTS_BY_TEMPLATE_ID_PAGING = "select * from object where object_template_id = ? LIMIT ?,?";
+    public final static String SELECT_OBJECTS_BY_PARENT_ID_PAGING = "select * from object where parent_object_id = ? LIMIT ?,?";
 }
