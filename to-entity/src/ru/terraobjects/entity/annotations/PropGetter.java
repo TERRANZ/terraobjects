@@ -22,4 +22,8 @@ public @interface PropGetter
     String name() default "";
 
     String id();
+
+    String autoincrement() default "false";
+
+    String startNum() default "0";
 }

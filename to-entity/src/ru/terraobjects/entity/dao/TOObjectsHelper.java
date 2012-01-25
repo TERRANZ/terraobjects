@@ -128,23 +128,38 @@ public class TOObjectsHelper
             {
                 if (m.isAnnotationPresent(PropGetter.class))
                 {
-                    //get method setter and set to retObj info from obj
+                    //get method getter and set to retObj info from obj
                     Integer propId = Integer.valueOf(m.getAnnotation(PropGetter.class).id());
                     Object val = null;
-                    try
+                    if (Boolean.valueOf(m.getAnnotation(PropGetter.class).autoincrement()))
                     {
-                        val = m.invoke(objToStore, new Object[]
-                                {
-                                });
-                    } catch (IllegalAccessException ex)
+                        Integer start = Integer.valueOf(m.getAnnotation(PropGetter.class).startNum());
+                        Long count = objManager.getObjectsCountByTemplateId(tId);
+                        if (count == 0)
+                        {
+                            count = new Long(start);
+                        } else
+                        {
+                            count += 1;
+                        }
+                        val = count;
+                    } else
                     {
-                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IllegalArgumentException ex)
-                    {
-                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InvocationTargetException ex)
-                    {
-                        Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                        try
+                        {
+                            val = m.invoke(objToStore, new Object[]
+                                    {
+                                    });
+                        } catch (IllegalAccessException ex)
+                        {
+                            Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IllegalArgumentException ex)
+                        {
+                            Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (InvocationTargetException ex)
+                        {
+                            Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                     prosManager.setPropertyValue(retId, propId, val);
                 }

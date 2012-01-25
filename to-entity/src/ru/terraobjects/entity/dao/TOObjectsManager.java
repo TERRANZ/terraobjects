@@ -103,7 +103,7 @@ public class TOObjectsManager
         return newobj;
     }
 
-    public Integer getObjectsCountByTemplateId(Integer templateId)
+    public Long getObjectsCountByTemplateId(Integer templateId)
     {
         try
         {
@@ -113,13 +113,13 @@ public class TOObjectsManager
             ResultSet rs = st.getResultSet();
             if (rs.last())
             {
-                return rs.getInt(1);
+                return rs.getLong(1);
             }
         } catch (SQLException ex)
         {
             Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 0;
+        return new Long(0);
     }
 
     public void removeObjectWithProps(Integer objId)
