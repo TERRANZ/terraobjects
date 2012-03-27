@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObject;
+import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.annotations.PropGetter;
 import ru.terraobjects.entity.annotations.PropSetter;
 import ru.terraobjects.entity.annotations.TemplateId;
@@ -16,9 +17,8 @@ import ru.terraobjects.entity.annotations.TemplateId;
  *
  * @author terranz
  */
-public class TOObjectsHelper
+public class TOObjectsHelper<T>
 {
-
     private Connection conn;
 
     public TOObjectsHelper(Connection conn)
@@ -26,7 +26,7 @@ public class TOObjectsHelper
         this.conn = conn;
     }
 
-    public List<Object> loadObjects(Class objectClass)
+    public List<T> loadObjects(Class objectClass)
     {
         TOObjectsManager objectsManager = new TOObjectsManager(conn);
         if (objectClass.isAnnotationPresent(TemplateId.class))
@@ -35,7 +35,7 @@ public class TOObjectsHelper
             if (tId != null)
             {
                 List<TOObject> objects = objectsManager.getAllObjsByTemplId(tId);
-                ArrayList<Object> ret = new ArrayList<Object>();
+                ArrayList<T> ret = new ArrayList<T>();
                 for (TOObject o : objects)
                 {
                     ret.add(loadObject(objectClass, o.getId()));
@@ -43,10 +43,11 @@ public class TOObjectsHelper
                 return ret;
             }
         }
-        throw new RuntimeException("Can't load objects from DB");
+        return null;
+        //throw new RuntimeException("Can't load objects from DB");
     }
 
-    public List<Object> loadObjects(Class objectClass, Integer page, Integer perPage)
+    public List<T> loadObjects(Class objectClass, Integer page, Integer perPage)
     {
         TOObjectsManager objectsManager = new TOObjectsManager(conn);
         if (objectClass.isAnnotationPresent(TemplateId.class))
@@ -55,7 +56,7 @@ public class TOObjectsHelper
             if (tId != null)
             {
                 List<TOObject> objects = objectsManager.getAllObjsByTemplId(tId, page, perPage);
-                ArrayList<Object> ret = new ArrayList<Object>();
+                ArrayList<T> ret = new ArrayList<T>();
                 for (TOObject o : objects)
                 {
                     ret.add(loadObject(objectClass, o.getId()));
@@ -63,16 +64,17 @@ public class TOObjectsHelper
                 return ret;
             }
         }
-        throw new RuntimeException("Can't load objects from DB");
+        return null;
+        //throw new RuntimeException("Can't load objects from DB");
     }
 
-    public Object loadObject(Class objectClass, Integer objectId)
+    public T loadObject(Class objectClass, Integer objectId)
     {
-        Object retObj = null;
+        T retObj = null;
         try
         {
             //loading object from db with props and construct new Object
-            retObj = objectClass.newInstance();
+            retObj = (T) objectClass.newInstance();
             TOPropertiesManager propsManager = new TOPropertiesManager(conn);
             TOObjectsManager objectsManager = new TOObjectsManager(conn);
             Integer objId = objectsManager.getObject(objectId).getId();
@@ -111,7 +113,7 @@ public class TOObjectsHelper
         return retObj;
     }
 
-    public Integer storeObject(Object objToStore, Boolean storedProc)
+    public Integer storeObject(T objToStore, Boolean storedProc)
     {
         //deconstruct object to props and store it into db
         Integer retId = null;
@@ -168,14 +170,14 @@ public class TOObjectsHelper
         return retId;
     }
 
-    public void updateObject(Object objToStore, Integer oId)
+    public void updateObject(T objToStore, Integer oId)
     {
-        TOObjectsManager objManager = new TOObjectsManager(conn);
+        //TOObjectsManager objManager = new TOObjectsManager(conn);
         TOPropertiesManager prosManager = new TOPropertiesManager(conn);
         TemplateId templateIdAnnotation = objToStore.getClass().getAnnotation(TemplateId.class);
         if (templateIdAnnotation != null)
         {
-            Integer tId = Integer.valueOf(templateIdAnnotation.id());
+            //  Integer tId = Integer.valueOf(templateIdAnnotation.id());
             for (Method m : objToStore.getClass().getMethods())
             {
                 if (m.isAnnotationPresent(PropGetter.class))
@@ -187,6 +189,7 @@ public class TOObjectsHelper
                         val = m.invoke(objToStore, new Object[]
                                 {
                                 });
+
                     } catch (IllegalAccessException ex)
                     {
                         Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
@@ -201,5 +204,22 @@ public class TOObjectsHelper
                 }
             }
         }
+    }
+
+    public List<Integer> findObjectsByField(Integer templateId, Integer propId, Object val)
+    {
+        TOObjectsManager objManager = new TOObjectsManager(conn);
+        TOPropertiesManager propManager = new TOPropertiesManager(conn);
+        List<TOObject> objectsByTemplate = objManager.getObjectsByTemplateAndProp(templateId, propId);
+        List<Integer> ret = new ArrayList<Integer>();
+        for (TOObject obj : objectsByTemplate)
+        {
+            Integer oid = obj.getId();
+            if (propManager.getPropertyValue(oid, propId) == val)
+            {
+                ret.add(oid);
+            }
+        }
+        return ret;
     }
 }

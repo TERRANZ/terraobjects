@@ -13,6 +13,7 @@ public class TOPropertyType
     public static final int TYPE_TEXT = 4;
     public static final int TYPE_DATE = 5;
     public static final int TYPE_LIST = 6;
+    public static final int TYPE_LONG = 2;
     private Integer id;
     private String name;
 

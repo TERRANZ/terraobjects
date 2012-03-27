@@ -18,7 +18,6 @@ import ru.terraobjects.entity.TOObject;
 
 public class TOObjectsManager
 {
-
     private Connection conn = null;
     private Persist persist = null;
 
@@ -192,5 +191,10 @@ public class TOObjectsManager
                 Logger.getLogger(TOObjectsManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public List<TOObject> getObjectsByTemplateAndProp(Integer templateId, Integer propId)
+    {
+        return persist.readList(TOObject.class, DAOConsts.SELECT_OBJECT_BY_TEMPLATE_ID_AND_PROP_ID, templateId, propId);
     }
 }
