@@ -1,14 +1,11 @@
 package ru.terraobjects.entity.dao;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObjectTemplate;
-import ru.terraobjects.entity.TOObjectTemplateProperty;
 import ru.terraobjects.entity.annotations.PropGetter;
-import ru.terraobjects.entity.annotations.PropSetter;
 import ru.terraobjects.entity.annotations.TemplateId;
 
 /**

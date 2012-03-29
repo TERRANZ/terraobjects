@@ -122,6 +122,7 @@ public class TOObjectProperty
 	this.textVal = textVal;
     }
 
+    @Column(name = "prop_type")
     public Integer getTypeId()
     {
         return typeId;
