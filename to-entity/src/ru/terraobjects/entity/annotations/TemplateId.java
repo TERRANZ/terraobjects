@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface TemplateId {
     String name() default "";
-    String id();
+    int id();
 }

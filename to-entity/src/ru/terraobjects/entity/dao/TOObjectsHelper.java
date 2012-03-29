@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObject;
-import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.annotations.PropGetter;
 import ru.terraobjects.entity.annotations.PropSetter;
 import ru.terraobjects.entity.annotations.TemplateId;
@@ -131,7 +130,8 @@ public class TOObjectsHelper<T>
                 if (m.isAnnotationPresent(PropGetter.class))
                 {
                     //get method getter and set to retObj info from obj
-                    Integer propId = Integer.valueOf(m.getAnnotation(PropGetter.class).id());
+                    Integer propId = m.getAnnotation(PropGetter.class).id();
+                    Integer propType = m.getAnnotation(PropGetter.class).type();
                     Object val = null;
                     if (Boolean.valueOf(m.getAnnotation(PropGetter.class).autoincrement()))
                     {
@@ -163,7 +163,7 @@ public class TOObjectsHelper<T>
                             Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                    prosManager.setPropertyValue(retId, propId, val);
+                    prosManager.setPropertyValue(retId, propId, val, propType);
                 }
             }
         }
@@ -183,6 +183,7 @@ public class TOObjectsHelper<T>
                 if (m.isAnnotationPresent(PropGetter.class))
                 {
                     Integer propId = Integer.valueOf(m.getAnnotation(PropGetter.class).id());
+                    Integer propType = m.getAnnotation(PropGetter.class).type();
                     Object val = null;
                     try
                     {
@@ -200,7 +201,7 @@ public class TOObjectsHelper<T>
                     {
                         Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    prosManager.setPropertyValue(oId, propId, val);
+                    prosManager.setPropertyValue(oId, propId, val, propType);
                 }
             }
         }

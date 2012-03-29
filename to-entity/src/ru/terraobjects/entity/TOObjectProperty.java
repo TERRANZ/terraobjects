@@ -15,6 +15,7 @@ public class TOObjectProperty
     private Integer id;
     private Integer objectId;
     private Integer propertyId;
+    private Integer typeId;
     private Integer intVal;
     private Float floatVal;
     private String stringVal;
@@ -120,4 +121,14 @@ public class TOObjectProperty
     {
 	this.textVal = textVal;
     }
+
+    public Integer getTypeId()
+    {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId)
+    {
+        this.typeId = typeId;
+    }      
 }

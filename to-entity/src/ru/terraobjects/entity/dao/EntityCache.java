@@ -5,7 +5,6 @@ import java.util.List;
 import ru.terraobjects.entity.TOObjectProperty;
 import ru.terraobjects.entity.TOObjectTemplate;
 import ru.terraobjects.entity.TOObjectTemplateProperty;
-import ru.terraobjects.entity.TOProperty;
 import ru.terraobjects.entity.TOPropertyType;
 
 /**
@@ -18,7 +17,6 @@ public class EntityCache
     private static EntityCache instance = new EntityCache();
     private HashMap<Integer, TOObjectTemplate> templateCache = new HashMap<Integer, TOObjectTemplate>();
     private HashMap<Integer, List<TOObjectTemplateProperty>> templatePropsCache = new HashMap<Integer, List<TOObjectTemplateProperty>>();
-    private HashMap<Integer, TOProperty> propertyCache = new HashMap<Integer, TOProperty>();
     private HashMap<Pair, TOObjectProperty> objectPropsCache = new HashMap<Pair, TOObjectProperty>();
     private HashMap<Integer, TOPropertyType> propertyTypeCache = new HashMap<Integer, TOPropertyType>();
 
@@ -46,17 +44,7 @@ public class EntityCache
     {
 	templatePropsCache.put(id, val);
     }
-
-    public TOProperty getPropertyFromCache(Integer id)
-    {
-	return propertyCache.get(id);
-    }
-
-    public void addPropertyToCache(Integer id, TOProperty val)
-    {
-	propertyCache.put(id, val);
-    }
-
+   
     public TOObjectProperty getObjectPropertyFromCache(Pair key)
     {
 	return objectPropsCache.get(key);

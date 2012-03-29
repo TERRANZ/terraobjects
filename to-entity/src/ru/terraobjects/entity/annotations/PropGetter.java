@@ -18,12 +18,9 @@ import java.lang.annotation.Target;
 })
 public @interface PropGetter
 {
-
     String name() default "";
-
-    String id();
-
-    String autoincrement() default "false";
-
-    String startNum() default "0";
+    int id();
+    boolean autoincrement() default false;
+    int startNum() default 0;    
+    int type();
 }

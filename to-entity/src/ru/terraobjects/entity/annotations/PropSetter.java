@@ -18,8 +18,7 @@ import java.lang.annotation.Target;
 })
 public @interface PropSetter
 {
-
     String name() default "";
-
-    String id();
+    int id();
+    int type();
 }

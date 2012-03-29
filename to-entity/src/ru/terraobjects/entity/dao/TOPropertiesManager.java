@@ -208,15 +208,8 @@ public class TOPropertiesManager
         TOObjectProperty objprop = getObjectProperty(oid, pid);
         if (objprop != null)
         {
-            TOProperty prop = EntityCache.getInstance().getPropertyFromCache(objprop.getPropertyId());
-            if (prop == null)
-            {
-                System.out.println("property not found in cache, loading");
-                prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, objprop.getPropertyId());
-                EntityCache.getInstance().addPropertyToCache(objprop.getPropertyId(), prop);
-            }
             Object ret = null;
-            switch (prop.getTypeId())
+            switch (objprop.getTypeId())
             {
                 case TOPropertyType.TYPE_STR:
                 {
@@ -259,6 +252,7 @@ public class TOPropertiesManager
         TOObjectProperty newProp = new TOObjectProperty();
         newProp.setObjectId(oid);
         newProp.setPropertyId(propid);
+        newProp.setTypeId(type);
         switch (type)
         {
             case TOPropertyType.TYPE_STR:
@@ -296,25 +290,18 @@ public class TOPropertiesManager
     }
 
     //ставит значение в object_props нужному объекту
-    public void setPropertyValue(Integer oid, Integer propid, Object value)
+    public void setPropertyValue(Integer oid, Integer propid, Object value, Integer type)
     {
         TOObjectProperty property = getObjectProperty(oid, propid);
-        TOProperty prop = null;
         if (property == null)
         {
             //throw new RuntimeException("Can't set property: " + propid);
-            createNewObjectPropertyWithValue(oid, propid, value, TOPropertyType.TYPE_STR);
+            createNewObjectPropertyWithValue(oid, propid, value, type);
         } else
         {
-            prop = EntityCache.getInstance().getPropertyFromCache(property.getPropertyId());
-            if (prop == null)
-            {
-                prop = persist.read(TOProperty.class, DAOConsts.SELECT_PROPERTY_BY_ID, propid);
-                EntityCache.getInstance().addPropertyToCache(propid, prop);
-            }
             try
             {
-                switch (prop.getTypeId())
+                switch (property.getTypeId())
                 {
                     case TOPropertyType.TYPE_STR:
                     {
