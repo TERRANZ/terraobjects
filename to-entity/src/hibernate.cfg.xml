@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/terraobjects</property>
+    <property name="hibernate.connection.username">scan</property>
+    <property name="hibernate.connection.password">scan</property>
+    <property name="hibernate.hbm2ddl.auto">none</property>
+    <property name="hibernate.use_sql_comments">true</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.jdbc.use_get_generated_keys">true</property>
+    <mapping class="ru.terraobjects.entity.ObjectPropListId"/>
+    <mapping class="ru.terraobjects.entity.ObjectPropList"/>
+    <mapping class="ru.terraobjects.entity.ObjectTemplate"/>
+    <mapping class="ru.terraobjects.entity.Property"/>
+    <mapping class="ru.terraobjects.entity.PropType"/>
+    <mapping class="ru.terraobjects.entity.ObjectTemplateProps"/>
+    <mapping class="ru.terraobjects.entity.TOBulkObjectProperty"/>
+    <mapping class="ru.terraobjects.entity.ObjectProps"/>
+    <mapping class="ru.terraobjects.entity.TOPropertyType"/>
+    <mapping class="ru.terraobjects.entity.ObjectPropsId"/>
+    <mapping class="ru.terraobjects.entity.Object"/>
+    <mapping class="ru.terraobjects.entity.annotations.PropSetter"/>
+    <mapping class="ru.terraobjects.entity.annotations.TemplateId"/>
+    <mapping class="ru.terraobjects.entity.annotations.PropGetter"/>
+    <mapping class="ru.terraobjects.entity.dao.TOObjectsHelper"/>
+    <mapping class="ru.terraobjects.entity.dao.Pair"/>
+    <mapping class="ru.terraobjects.entity.dao.TOTemplateHelper"/>
+    <mapping class="ru.terraobjects.entity.dao.EntityCache"/>
+    <mapping class="ru.terraobjects.entity.dao.TOObjectsManager"/>
+    <mapping class="ru.terraobjects.entity.dao.TOPropertiesManager"/>
+    <mapping class="ru.terraobjects.entity.dao.TOTemplateManager"/>
+    <mapping class="ru.terraobjects.entity.dao.DAOConsts"/>
+  </session-factory>
+</hibernate-configuration>
