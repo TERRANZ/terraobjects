@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import ru.terraobjects.entity.PersistanceManager;
 import ru.terraobjects.entity.TOObject;
 import ru.terraobjects.entity.TOObjectProperty;
+import ru.terraobjects.entity.TOObjectPropsId;
 import ru.terraobjects.entity.TOObjectTemplate;
 import ru.terraobjects.entity.TOObjectTemplateProperty;
 import ru.terraobjects.entity.TOProperty;
@@ -130,6 +131,8 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         newProp.setObject(obj);
         newProp.setProperty(prop);
         newProp.setPropType(type);
+        TOObjectPropsId id = new TOObjectPropsId(0, obj.getObjectId(), prop.getPropId());
+        newProp.setId(id);
         try
         {
             switch (type)

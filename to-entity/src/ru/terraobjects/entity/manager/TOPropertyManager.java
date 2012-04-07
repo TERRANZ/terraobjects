@@ -1,13 +1,11 @@
 package ru.terraobjects.entity.manager;
 
-import java.awt.image.RescaleOp;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
+import ru.terraobjects.entity.EntityCache;
 import ru.terraobjects.entity.PersistanceManager;
 import ru.terraobjects.entity.TOPropType;
 import ru.terraobjects.entity.TOProperty;
-import ru.terraobjects.entity.TOPropertyType;
-import ru.terraobjects.entity.dao.DAOConsts;
 
 /**
  *
@@ -19,7 +17,13 @@ public class TOPropertyManager extends PersistanceManager<TOProperty>
     @Override
     public TOProperty findById(Integer id)
     {
-        return (TOProperty) session.createCriteria(TOProperty.class).add(Restrictions.eq("propId", id)).uniqueResult();
+        TOProperty ret = EntityCache.getInstance().getProperty(id);
+        if (ret == null)
+        {
+            ret = (TOProperty) session.createCriteria(TOProperty.class).add(Restrictions.eq("propId", id)).uniqueResult();
+            EntityCache.getInstance().addProperty(id, ret);
+        }
+        return ret;
     }
 
     public List<TOProperty> getProperties()

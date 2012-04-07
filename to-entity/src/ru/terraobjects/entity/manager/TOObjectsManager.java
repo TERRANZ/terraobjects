@@ -92,7 +92,11 @@ public class TOObjectsManager extends PersistanceManager<TOObject>
     public List<TOObject> getObjectsByTemplateAndPropValue(Integer templateId, Integer propId, Integer type, Object val)
     {
         String sql = DAOConsts.SELECT_OBJECT_BY_TEMPLATE_ID_AND_PROP_ID_AND_PROP_VAL.replace("$TYPE$", TOPropertyType.getTypeValById(type));
-        Query q = session.createSQLQuery(DAOConsts.SELECT_OBJECT_BY_TEMPLATE_ID_AND_PROP_ID).addEntity(TOObject.class).setParameter(1, templateId).setParameter(2, propId).setParameter(3, val);
+
+        Query q = session.createSQLQuery(sql).addEntity(TOObject.class);
+        q.setParameter("tid", templateId);
+        q.setParameter("pid", propId);
+        q.setParameter("val", val);
         return q.list();
     }
 

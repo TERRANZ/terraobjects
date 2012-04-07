@@ -2,6 +2,7 @@ package ru.terraobjects.entity.manager;
 
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
+import ru.terraobjects.entity.EntityCache;
 import ru.terraobjects.entity.PersistanceManager;
 import ru.terraobjects.entity.TOObjectTemplate;
 
@@ -15,7 +16,13 @@ public class TOObjectTemplateManager extends PersistanceManager<TOObjectTemplate
     @Override
     public TOObjectTemplate findById(Integer id)
     {
-        return (TOObjectTemplate) session.createCriteria(TOObjectTemplate.class).add(Restrictions.eq("objectTemplateId", id)).uniqueResult();
+        TOObjectTemplate ret = EntityCache.getInstance().getTemplateFromCache(id);
+        if (ret == null)
+        {
+             ret = (TOObjectTemplate) session.createCriteria(TOObjectTemplate.class).add(Restrictions.eq("objectTemplateId", id)).uniqueResult();
+             EntityCache.getInstance().addTemplateToCache(id, ret);
+        }
+        return ret;
     }
 
     public TOObjectTemplate getTemplate(Integer templateId)

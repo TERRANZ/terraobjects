@@ -51,6 +51,6 @@ public interface DAOConsts
     public final static String SELECT_OBJECT_BY_TEMPLATE_ID_AND_PROP_ID =
 	    "select obj.* from object obj join object_props op on op.object_id=obj.object_id where obj.object_template_id = ? and op.prop_id = ? ";
     public final static String SELECT_OBJECT_BY_TEMPLATE_ID_AND_PROP_ID_AND_PROP_VAL =
-	    "select obj.* from object obj join object_props op on op.object_id=obj.object_id where obj.object_template_id = ? and op.prop_id = ? "+
-	    " and op.$TYPE$ = ?";
+	    "select obj.* from object obj join object_props op on op.object_id=obj.object_id where obj.object_template_id = :tid and op.prop_id = :pid "+
+	    " and op.$TYPE$ = :val";
 }

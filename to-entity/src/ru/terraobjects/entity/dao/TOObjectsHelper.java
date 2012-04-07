@@ -187,7 +187,7 @@ public class TOObjectsHelper<T>
                         }
                     }
                     TOObjectPropsId id = new TOObjectPropsId(0, ret.getObjectId(), propId);
-                    if (storedProc)
+                    if (!storedProc)
                     {
                         propsManager.createNewObjectPropertyWithValue(ret, prop, val, propType);
                     }

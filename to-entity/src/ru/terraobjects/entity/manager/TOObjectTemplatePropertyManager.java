@@ -67,6 +67,7 @@ public class TOObjectTemplatePropertyManager extends PersistanceManager<TOObject
 
     public TOObjectTemplateProperty getObjectTemplateProp(Integer prop)
     {
+
         return (TOObjectTemplateProperty) session.createCriteria(TOObjectTemplateProperty.class).add(Restrictions.eq("property.propId", prop)).uniqueResult();
     }
 
