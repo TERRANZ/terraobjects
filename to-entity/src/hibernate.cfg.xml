@@ -11,27 +11,15 @@
     <property name="hibernate.use_sql_comments">true</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.jdbc.use_get_generated_keys">true</property>
-    <mapping class="ru.terraobjects.entity.ObjectPropListId"/>
-    <mapping class="ru.terraobjects.entity.ObjectPropList"/>
-    <mapping class="ru.terraobjects.entity.ObjectTemplate"/>
-    <mapping class="ru.terraobjects.entity.Property"/>
-    <mapping class="ru.terraobjects.entity.PropType"/>
-    <mapping class="ru.terraobjects.entity.ObjectTemplateProps"/>
-    <mapping class="ru.terraobjects.entity.TOBulkObjectProperty"/>
-    <mapping class="ru.terraobjects.entity.ObjectProps"/>
+    <mapping class="ru.terraobjects.entity.TOObjectPropListId"/>
+    <mapping class="ru.terraobjects.entity.TOObjectPropList"/>
+    <mapping class="ru.terraobjects.entity.TOObjectTemplate"/>
+    <mapping class="ru.terraobjects.entity.TOProperty"/>
+    <mapping class="ru.terraobjects.entity.TOPropType"/>
+    <mapping class="ru.terraobjects.entity.TOObjectTemplateProperty"/>
+    <mapping class="ru.terraobjects.entity.TOObjectProperty"/>
     <mapping class="ru.terraobjects.entity.TOPropertyType"/>
-    <mapping class="ru.terraobjects.entity.ObjectPropsId"/>
-    <mapping class="ru.terraobjects.entity.Object"/>
-    <mapping class="ru.terraobjects.entity.annotations.PropSetter"/>
-    <mapping class="ru.terraobjects.entity.annotations.TemplateId"/>
-    <mapping class="ru.terraobjects.entity.annotations.PropGetter"/>
-    <mapping class="ru.terraobjects.entity.dao.TOObjectsHelper"/>
-    <mapping class="ru.terraobjects.entity.dao.Pair"/>
-    <mapping class="ru.terraobjects.entity.dao.TOTemplateHelper"/>
-    <mapping class="ru.terraobjects.entity.dao.EntityCache"/>
-    <mapping class="ru.terraobjects.entity.dao.TOObjectsManager"/>
-    <mapping class="ru.terraobjects.entity.dao.TOPropertiesManager"/>
-    <mapping class="ru.terraobjects.entity.dao.TOTemplateManager"/>
-    <mapping class="ru.terraobjects.entity.dao.DAOConsts"/>
+    <mapping class="ru.terraobjects.entity.TOObjectPropsId"/>
+    <mapping class="ru.terraobjects.entity.TOObject"/>
   </session-factory>
 </hibernate-configuration>

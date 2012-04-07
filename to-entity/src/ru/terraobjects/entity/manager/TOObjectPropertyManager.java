@@ -29,12 +29,12 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
 
     public void removeObjectProperty(Integer oId, Integer propId)
     {
-        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID).setParameter(0, oId).setParameter(1, propId).executeUpdate();
+        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID_AND_PROP_ID).setParameter(1, oId).setParameter(2, propId).executeUpdate();
     }
 
     public void removeObjectPropertyByPropId(Integer propId)
     {
-        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_PROP_ID).setParameter(0, propId).executeUpdate();
+        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_PROP_ID).setParameter(1, propId).executeUpdate();
     }
 
     public List<TOObjectProperty> getObjPropsForObjId(Integer oid)
@@ -49,7 +49,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
 
     public void removeObjPropertiesFromObject(Integer oId)
     {
-        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID).setParameter(0, oId).executeUpdate();
+        session.createSQLQuery(DAOConsts.REMOVE_OBJECT_PROP_BY_OBJECT_ID).setParameter(1, oId).executeUpdate();
         //todo implement removing list property type
     }
 
@@ -67,7 +67,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
     {
         if (storedProc)
         {
-            session.createSQLQuery(DAOConsts.CREATE_PROPS_FOR_OBJECT).setParameter(0, template.getObjectTemplateId()).setParameter(1, obj.getObjectId()).executeUpdate();
+            session.createSQLQuery(DAOConsts.CREATE_PROPS_FOR_OBJECT).setParameter(1, template.getObjectTemplateId()).setParameter(2, obj.getObjectId()).executeUpdate();
         }
         else
         {
