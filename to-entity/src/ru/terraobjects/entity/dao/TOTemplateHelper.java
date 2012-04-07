@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import ru.terraobjects.entity.TOObjectTemplate;
 import ru.terraobjects.entity.annotations.PropGetter;
 import ru.terraobjects.entity.annotations.TemplateId;
+import ru.terraobjects.entity.manager.TOObjectTemplateManager;
+import ru.terraobjects.entity.manager.TOObjectTemplatePropertyManager;
 
 /**
  *
@@ -14,13 +16,16 @@ import ru.terraobjects.entity.annotations.TemplateId;
  */
 public class TOTemplateHelper
 {
+
     private Connection conn;
-    private TOTemplateManager templateManager;
+    private TOObjectTemplatePropertyManager templatePropertyManager;
+    private TOObjectTemplateManager templateManager;
 
     public TOTemplateHelper(Connection conn)
     {
         this.conn = conn;
-        templateManager = new TOTemplateManager(conn);
+        templatePropertyManager = new TOObjectTemplatePropertyManager();
+        templateManager = new TOObjectTemplateManager();
     }
 
     //TODO: class -> template+props
@@ -37,7 +42,8 @@ public class TOTemplateHelper
                 Logger.getLogger(TOTemplateHelper.class.getName()).log(Level.SEVERE, null,
                         "Template with id " + templateId + " already exists!");
                 return null;
-            } else
+            }
+            else
             {
                 TOObjectTemplate newTemplate = templateManager.createTemplate(dtoClass.getSimpleName(), templateId, null);
                 //System.out.println("NewTemplate id " + newTemplate.getId());
@@ -52,7 +58,7 @@ public class TOTemplateHelper
                         System.out.println("prop id " + propId);
                         String name = "".equals(m.getAnnotation(PropGetter.class).name()) ? m.getName() : m.getAnnotation(PropGetter.class).name();
                         System.out.println("name: " + name);
-                        System.out.println("New Property: " + templateManager.createNewProperty(m.getReturnType(), propId, templateId, name).getId());
+                        System.out.println("New Property: " + templatePropertyManager.createNewTemplateProperty(m.getReturnType(), propId, templateManager.findById(templateId), name).getObjectTemplatePropsId());
                     }
                 }
                 return newTemplate;
