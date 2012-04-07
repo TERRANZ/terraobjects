@@ -133,46 +133,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         newProp.setPropType(type);
         TOObjectPropsId id = new TOObjectPropsId(0, obj.getObjectId(), prop.getPropId());
         newProp.setId(id);
-        try
-        {
-            switch (type)
-            {
-                case TOPropertyType.TYPE_STR:
-                {
-                    newProp.setStrval(String.valueOf(value));
-                }
-                break;
-                case TOPropertyType.TYPE_INT:
-                {
-                    newProp.setIntval(Integer.valueOf(String.valueOf(value)));
-                }
-                break;
-                case TOPropertyType.TYPE_FLOAT:
-                {
-                    newProp.setFloatval(Float.valueOf(String.valueOf(value)));
-                }
-                break;
-                case TOPropertyType.TYPE_TEXT:
-                {
-                    newProp.setTextval(String.valueOf(value));
-                }
-                break;
-                case TOPropertyType.TYPE_DATE:
-                {
-                    newProp.setDateval((Date) value);
-                }
-                break;
-                case TOPropertyType.TYPE_LIST:
-                {
-                    newProp.setListval(Integer.valueOf(String.valueOf(value)));
-                }
-                break;
-            }
-        }
-        catch (NumberFormatException e)
-        {
-            System.out.println("NumberFormatException while translating " + prop.getPropId() + " with value " + value + " for object " + obj.getObjectId());
-        }
+        setPropValue(newProp, value, type);
         insert(newProp);
     }
     //ставит значение в object_props нужному объекту
@@ -187,47 +148,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         }
         else
         {
-            try
-            {
-                property.setPropType(type);
-                switch (type)
-                {
-                    case TOPropertyType.TYPE_STR:
-                    {
-                        property.setStrval(String.valueOf(value));
-                    }
-                    break;
-                    case TOPropertyType.TYPE_INT:
-                    {
-                        property.setIntval(Integer.valueOf(String.valueOf(value)));
-                    }
-                    break;
-                    case TOPropertyType.TYPE_FLOAT:
-                    {
-                        property.setFloatval(Float.valueOf(String.valueOf(value)));
-                    }
-                    break;
-                    case TOPropertyType.TYPE_TEXT:
-                    {
-                        property.setStrval(String.valueOf(value));
-                    }
-                    break;
-                    case TOPropertyType.TYPE_DATE:
-                    {
-                        property.setDateval((Date) value);
-                    }
-                    break;
-                    case TOPropertyType.TYPE_LIST:
-                    {
-                        property.setListval(Integer.valueOf(String.valueOf(value)));
-                    }
-                    break;
-                }
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println("NumberFormatException while translating " + prop.getPropId() + " with value " + value + " for object " + obj.getObjectId());
-            }
+            setPropValue(property, value, type);
             update(property);
         }
     }
@@ -242,5 +163,51 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         session.flush();
         session.clear();
         tx.commit();
+    }
+
+    public static TOObjectProperty setPropValue(TOObjectProperty prop, Object val, Integer type)
+    {
+        try
+        {
+            prop.setPropType(type);
+            switch (type)
+            {
+                case TOPropertyType.TYPE_STR:
+                {
+                    prop.setStrval(String.valueOf(val));
+                }
+                break;
+                case TOPropertyType.TYPE_INT:
+                {
+                    prop.setIntval(Integer.valueOf(String.valueOf(val)));
+                }
+                break;
+                case TOPropertyType.TYPE_FLOAT:
+                {
+                    prop.setFloatval(Float.valueOf(String.valueOf(val)));
+                }
+                break;
+                case TOPropertyType.TYPE_TEXT:
+                {
+                    prop.setStrval(String.valueOf(val));
+                }
+                break;
+                case TOPropertyType.TYPE_DATE:
+                {
+                    prop.setDateval((Date) val);
+                }
+                break;
+                case TOPropertyType.TYPE_LIST:
+                {
+                    prop.setListval(Integer.valueOf(String.valueOf(val)));
+                }
+                break;
+            }
+        }
+        catch (NumberFormatException e)
+        {
+            System.out.println("NumberFormatException while translating value ");
+        }
+        return prop;
     }
 }

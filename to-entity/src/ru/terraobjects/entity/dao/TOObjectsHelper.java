@@ -193,11 +193,11 @@ public class TOObjectsHelper<T>
                     }
                     else
                     {
-                        props.add(new TOObjectProperty(id, ret, prop, propType));
+                        TOObjectProperty newProp = new TOObjectProperty(id, ret, prop, propType);
+                        TOObjectPropertyManager.setPropValue(newProp, val, propType);
+                        props.add(newProp);
                     }
-
                 }
-
             }
             if (!props.isEmpty())
             {
