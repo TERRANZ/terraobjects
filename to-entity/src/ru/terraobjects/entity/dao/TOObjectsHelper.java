@@ -250,9 +250,9 @@ public class TOObjectsHelper<T>
         }
     }
 
-    public List<TOObject> findObjectsByField(Integer templateId, Integer propId, Object val, Integer type)
+    public List<TOObject> findObjectsByField(Integer propId, Object val, Integer type)
     {
         TOObjectsManager objManager = new TOObjectsManager();
-        return objManager.getObjectsByTemplateAndPropValue(templateId, propId, type, val);
+        return objManager.getObjectsByPropAndPropVal(propId, type, val);
     }
 }
