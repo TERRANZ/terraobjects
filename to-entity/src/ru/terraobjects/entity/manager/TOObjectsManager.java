@@ -110,7 +110,7 @@ public class TOObjectsManager extends PersistanceManager<TOObject>
     public List<Integer> getObjectsByPropAndPropVal(Integer propId, Integer type, Object val)
     {
 	String sql = DAOConsts.SELECT_OBJECTID_BY_PROP_ID_AND_PROP_VAL.replace("$TYPE$", TOPropertyType.getTypeValById(type));
-	Query q = session.createSQLQuery(sql).addEntity(TOObject.class);
+	Query q = session.createSQLQuery(sql);
 	q.setParameter("pid", propId);
 	q.setParameter("val", val);
 	return q.list();
