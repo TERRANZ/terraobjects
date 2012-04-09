@@ -206,7 +206,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         }
         catch (NumberFormatException e)
         {
-            System.out.println("NumberFormatException while translating value ");
+            //System.out.println("NumberFormatException while translating value ");
         }
         return prop;
     }
