@@ -16,14 +16,11 @@ import ru.terraobjects.entity.manager.TOObjectTemplatePropertyManager;
  */
 public class TOTemplateHelper
 {
-
-    private Connection conn;
     private TOObjectTemplatePropertyManager templatePropertyManager;
     private TOObjectTemplateManager templateManager;
 
-    public TOTemplateHelper(Connection conn)
+    public TOTemplateHelper()
     {
-        this.conn = conn;
         templatePropertyManager = new TOObjectTemplatePropertyManager();
         templateManager = new TOObjectTemplateManager();
     }
@@ -42,8 +39,7 @@ public class TOTemplateHelper
                 Logger.getLogger(TOTemplateHelper.class.getName()).log(Level.SEVERE, null,
                         "Template with id " + templateId + " already exists!");
                 return null;
-            }
-            else
+            } else
             {
                 TOObjectTemplate newTemplate = templateManager.createTemplate(dtoClass.getSimpleName(), templateId, null);
                 //System.out.println("NewTemplate id " + newTemplate.getId());
@@ -58,7 +54,7 @@ public class TOTemplateHelper
                         System.out.println("prop id " + propId);
                         String name = "".equals(m.getAnnotation(PropGetter.class).name()) ? m.getName() : m.getAnnotation(PropGetter.class).name();
                         System.out.println("name: " + name);
-                        System.out.println("New Property: " + templatePropertyManager.createNewTemplateProperty(m.getReturnType(), propId, templateManager.findById(templateId), name).getObjectTemplatePropsId());
+                        System.out.println("New Property: " + templatePropertyManager.createNewTemplateProperty(m.getReturnType(), propId, newTemplate, name).getObjectTemplatePropsId());
                     }
                 }
                 return newTemplate;

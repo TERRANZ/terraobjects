@@ -42,6 +42,7 @@ public class TOPropertyManager extends PersistanceManager<TOProperty>
         newProp.setPropType(propType);
         newProp.setPropDefvalue(defVal);
         newProp.setPropName(name);
+        newProp.setPropId(propId);
         insert(newProp);
         return newProp;
     }

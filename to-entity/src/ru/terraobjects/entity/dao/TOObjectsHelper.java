@@ -25,15 +25,13 @@ import ru.terraobjects.entity.manager.TOPropertyManager;
  */
 public class TOObjectsHelper<T>
 {
-    private Connection conn;
     private TOObjectsManager objectsManager;
     private TOObjectTemplateManager templateManger;
     private TOObjectPropertyManager propsManager;
     private TOPropertyManager propMngr;
 
-    public TOObjectsHelper(Connection conn)
+    public TOObjectsHelper()
     {
-        this.conn = conn;
         objectsManager = new TOObjectsManager();
         templateManger = new TOObjectTemplateManager();
         propsManager = new TOObjectPropertyManager();

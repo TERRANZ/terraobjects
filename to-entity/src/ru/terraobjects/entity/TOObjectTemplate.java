@@ -32,66 +32,65 @@ public class TOObjectTemplate implements java.io.Serializable
 
     public TOObjectTemplate(String objectTemplateName, Integer parentObjectTemplateId, Set<TOObjectTemplateProperty> objectTemplatePropses, Set<TOObject> objects)
     {
-	this.objectTemplateName = objectTemplateName;
-	this.parentObjectTemplateId = parentObjectTemplateId;
-	this.objectTemplatePropses = objectTemplatePropses;
-	this.objects = objects;
+        this.objectTemplateName = objectTemplateName;
+        this.parentObjectTemplateId = parentObjectTemplateId;
+        this.objectTemplatePropses = objectTemplatePropses;
+        this.objects = objects;
     }
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "object_template_id", unique = true, nullable = false)
     public Integer getObjectTemplateId()
     {
-	return this.objectTemplateId;
+        return this.objectTemplateId;
     }
 
     public void setObjectTemplateId(Integer objectTemplateId)
     {
-	this.objectTemplateId = objectTemplateId;
+        this.objectTemplateId = objectTemplateId;
     }
 
     @Column(name = "Object_Template_Name", length = 20)
     public String getObjectTemplateName()
     {
-	return this.objectTemplateName;
+        return this.objectTemplateName;
     }
 
     public void setObjectTemplateName(String objectTemplateName)
     {
-	this.objectTemplateName = objectTemplateName;
+        this.objectTemplateName = objectTemplateName;
     }
 
     @Column(name = "parent_object_template_id")
     public Integer getParentObjectTemplateId()
     {
-	return this.parentObjectTemplateId;
+        return this.parentObjectTemplateId;
     }
 
     public void setParentObjectTemplateId(Integer parentObjectTemplateId)
     {
-	this.parentObjectTemplateId = parentObjectTemplateId;
+        this.parentObjectTemplateId = parentObjectTemplateId;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "objectTemplate")
     public Set<TOObjectTemplateProperty> getObjectTemplatePropses()
     {
-	return this.objectTemplatePropses;
+        return this.objectTemplatePropses;
     }
 
     public void setObjectTemplatePropses(Set<TOObjectTemplateProperty> objectTemplatePropses)
     {
-	this.objectTemplatePropses = objectTemplatePropses;
+        this.objectTemplatePropses = objectTemplatePropses;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "objectTemplate")
     public Set<TOObject> getObjects()
     {
-	return this.objects;
+        return this.objects;
     }
 
     public void setObjects(Set<TOObject> objects)
     {
-	this.objects = objects;
+        this.objects = objects;
     }
 }

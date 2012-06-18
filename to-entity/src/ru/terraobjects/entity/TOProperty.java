@@ -49,7 +49,6 @@ public class TOProperty implements java.io.Serializable
     }
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "prop_id", unique = true, nullable = false)
     public Integer getPropId()
     {

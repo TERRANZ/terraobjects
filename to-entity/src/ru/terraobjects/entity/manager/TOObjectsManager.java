@@ -64,7 +64,7 @@ public class TOObjectsManager extends PersistanceManager<TOObject>
         Criteria criteria = session.createCriteria(TOObject.class);
         criteria.setProjection(Projections.rowCount());
         criteria.add(Restrictions.eq("objectTemplate", template));
-        return ((Long) criteria.list().get(0)).longValue();
+        return ((Integer) criteria.list().get(0)).longValue();
     }
 
     public void removeObjectWithProps(Integer objId)

@@ -35,7 +35,6 @@ public class TOPropType implements java.io.Serializable
     }
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "prop_type_id", unique = true, nullable = false)
     public Integer getPropTypeId()
     {
