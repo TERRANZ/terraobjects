@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/to</property>
+    <property name="hibernate.connection.username">2ch</property>
+    <property name="hibernate.connection.password">2ch</property>
+    <property name="hibernate.hbm2ddl.auto">none</property>
+    <property name="hibernate.use_sql_comments">true</property>
+    <property name="hibernate.show_sql">false</property>
+    <property name="hibernate.jdbc.use_get_generated_keys">true</property>
+    <mapping class="ru.terraobjects.entity.TOObjectPropListId"/>
+    <mapping class="ru.terraobjects.entity.TOObjectPropList"/>
+    <mapping class="ru.terraobjects.entity.TOObjectTemplate"/>
+    <mapping class="ru.terraobjects.entity.TOProperty"/>
+    <mapping class="ru.terraobjects.entity.TOPropType"/>
+    <mapping class="ru.terraobjects.entity.TOObjectTemplateProperty"/>
+    <mapping class="ru.terraobjects.entity.TOObjectProperty"/>
+    <mapping class="ru.terraobjects.entity.TOPropertyType"/>
+    <mapping class="ru.terraobjects.entity.TOObjectPropsId"/>
+    <mapping class="ru.terraobjects.entity.TOObject"/>
+  </session-factory>
+</hibernate-configuration>
