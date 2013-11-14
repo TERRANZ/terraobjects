@@ -116,8 +116,9 @@ public class TOObjectsHelper<T> {
         if (templateIdAnnotation != null) {
             Integer tId = Integer.valueOf(templateIdAnnotation.id());
             ret = objectsManager.createNewObject(tId);
-            //prosManager.createDefaultPropsForObject(tId, retId, storedProc);
             List<TOObjectProperty> props = new ArrayList<>();
+            if (storedProc)
+                propsManager.createDeafultPropsForObject(tId, ret.getObjectId());
             for (Method m : objToStore.getClass().getMethods()) {
                 if (m.isAnnotationPresent(PropGetter.class)) {
                     //get method getter and set to retObj info from obj

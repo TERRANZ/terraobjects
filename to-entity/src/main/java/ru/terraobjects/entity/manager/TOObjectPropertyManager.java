@@ -1,7 +1,9 @@
 package ru.terraobjects.entity.manager;
 
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
 import ru.terraobjects.entity.*;
 import ru.terraobjects.entity.dao.DAOConsts;
 
@@ -61,6 +63,10 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
                 createNewObjectPropertyWithValue(obj, prop.getProperty(), "", TOPropertyType.TYPE_STR);
             }
         }
+    }
+
+    public void createDeafultPropsForObject(Integer templateId, Integer objectId) {
+        session.createSQLQuery(DAOConsts.CREATE_PROPS_FOR_OBJECT).setParameter(0, templateId).setParameter(1, objectId).executeUpdate();
     }
 
     public Object getPropertyValue(TOObject obj, TOProperty prop) {
@@ -123,8 +129,30 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
 
     public void bulkCreateObjectProps(List<TOObjectProperty> props) {
         Transaction tx = session.beginTransaction();
+        Query q = session.createSQLQuery("update object_props set" +
+                " dateval = :dateval," +
+                "  floatval = :floatval," +
+                "  intval = :intval," +
+                "  listval = :listval," +
+                "  prop_type =:prop_type," +
+                "  strval = :strval," +
+                "  textval = :textval," +
+                "  object_id = :object_id," +
+                "  object_props_id = :object_props_id," +
+                "  prop_id =:prop_id" +
+                "  where object_id = :object_id AND prop_id = :prop_id");
         for (TOObjectProperty o : props) {
-            session.save(o);
+            q.setParameter("object_id", o.getObject().getObjectId());
+            q.setParameter("prop_id", o.getProperty().getPropId());
+            q.setParameter("dateval", o.getDateval());
+            q.setParameter("floatval", o.getFloatval());
+            q.setParameter("intval", o.getIntval());
+            q.setParameter("listval", o.getListval());
+            q.setParameter("prop_type", o.getPropType());
+            q.setParameter("strval", o.getStrval());
+            q.setParameter("textval", o.getTextval());
+            q.setParameter("object_props_id", 0);
+            q.executeUpdate();
         }
         session.flush();
         session.clear();
