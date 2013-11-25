@@ -106,11 +106,11 @@ public class TOObjectsManager extends PersistanceManager<TOObject> {
         return q.list();
     }
 
-    public Long getObjectsCountByPropAndPropVal(Integer propId, Integer type, Object val) {
+    public Integer getObjectsCountByPropAndPropVal(Integer propId, Integer type, Object val) {
         String sql = DAOConsts.SELECT_OBJECTID_BY_PROP_ID_AND_PROP_VAL.replace("$TYPE$", TOPropertyType.getTypeValById(type));
         Query q = session.createSQLQuery(sql);
         q.setParameter("pid", propId);
         q.setParameter("val", val);
-        return (Long) q.uniqueResult();
+        return (Integer) q.uniqueResult();
     }
 }

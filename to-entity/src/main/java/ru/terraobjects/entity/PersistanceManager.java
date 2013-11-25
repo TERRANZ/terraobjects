@@ -12,6 +12,7 @@ import java.util.List;
  */
 public abstract class PersistanceManager<T> {
     protected Session session = null;
+    protected Logger logger = Logger.getLogger(this.getClass());
 
     public PersistanceManager() {
         Logger.getLogger(this.getClass()).info("Creating persistance manager");
@@ -63,4 +64,16 @@ public abstract class PersistanceManager<T> {
     }
 
     public abstract T findById(Integer id);
+
+    public void insert(List<T> os) {
+        try {
+            session.beginTransaction();
+            for (T o : os)
+                session.save(o);
+            session.getTransaction().commit();
+        } catch (HibernateException he) {
+            session.getTransaction().rollback();
+            he.printStackTrace();
+        }
+    }
 }

@@ -1,9 +1,6 @@
 package ru.terraobjects.entity.dao;
 
-import ru.terraobjects.entity.TOObject;
-import ru.terraobjects.entity.TOObjectProperty;
-import ru.terraobjects.entity.TOObjectPropsId;
-import ru.terraobjects.entity.TOProperty;
+import ru.terraobjects.entity.*;
 import ru.terraobjects.entity.annotations.PropGetter;
 import ru.terraobjects.entity.annotations.PropSetter;
 import ru.terraobjects.entity.annotations.TemplateId;
@@ -145,17 +142,19 @@ public class TOObjectsHelper<T> {
                         }
                     }
                     TOObjectPropsId id = new TOObjectPropsId(0, ret.getObjectId(), propId);
-                    if (!storedProc) {
-                        propsManager.createNewObjectPropertyWithValue(ret, prop, val, propType);
-                    } else {
+                    if (storedProc) {
                         TOObjectProperty newProp = new TOObjectProperty(id, ret, prop, propType);
                         TOObjectPropertyManager.setPropValue(newProp, val, propType);
                         props.add(newProp);
-                    }
+                    } else
+                        props.add(propsManager.generateNewObjectPropertyWithValue(ret, prop, val, propType));
                 }
             }
             if (!props.isEmpty()) {
-                propsManager.bulkCreateObjectProps(props);
+                if (storedProc)
+                    propsManager.bulkCreateObjectProps(props);
+                else
+                    propsManager.saveNewObjectProperties(props);
             }
         }
         return ret;
@@ -191,7 +190,7 @@ public class TOObjectsHelper<T> {
         return objectsManager.getObjectsByPropAndPropVal(propId, type, val);
     }
 
-    public Long countObjectsByField(Integer propId, Object val, Integer type) {
+    public Integer countObjectsByField(Integer propId, Object val, Integer type) {
         return objectsManager.getObjectsCountByPropAndPropVal(propId, type, val);
     }
 

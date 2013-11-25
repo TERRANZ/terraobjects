@@ -1,9 +1,9 @@
 package ru.terraobjects.entity.manager;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-
 import ru.terraobjects.entity.*;
 import ru.terraobjects.entity.dao.DAOConsts;
 
@@ -105,6 +105,11 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
     }
 
     public void createNewObjectPropertyWithValue(TOObject obj, TOProperty prop, Object value, Integer type) {
+        TOObjectProperty newProp = generateNewObjectPropertyWithValue(obj, prop, value, type);
+        insert(newProp);
+    }
+
+    public TOObjectProperty generateNewObjectPropertyWithValue(TOObject obj, TOProperty prop, Object value, Integer type) {
         TOObjectProperty newProp = new TOObjectProperty();
         newProp.setObject(obj);
         newProp.setProperty(prop);
@@ -112,7 +117,36 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
         TOObjectPropsId id = new TOObjectPropsId(0, obj.getObjectId(), prop.getPropId());
         newProp.setId(id);
         setPropValue(newProp, value, type);
-        insert(newProp);
+        return newProp;
+    }
+
+    public void saveNewObjectProperties(List<TOObjectProperty> props) {
+        session.beginTransaction();
+        String sql = "insert into object_props (dateval, floatval, intval, listval, prop_type, strval, textval, object_id, object_props_id, prop_id) values ";
+        for (TOObjectProperty property : props) {
+            sql += " (" + property.getDateval()
+                    + ", " + property.getFloatval()
+                    + ", " + property.getIntval()
+                    + ", " + property.getListval()
+                    + ", " + property.getPropType()
+                    + ", '" + property.getStrval()
+                    + "', '" + property.getTextval()
+                    + "', " + property.getObject().getObjectId()
+                    + ", 0, " + property.getProperty().getPropId()
+                    + ") ";
+            sql += ",";
+        }
+        sql = sql.substring(0, sql.length() - 1);
+        Query q = session.createSQLQuery(sql);
+        try {
+            q.executeUpdate();
+            session.getTransaction().commit();
+        } catch (HibernateException he) {
+            session.getTransaction().rollback();
+            logger.error("Unable to save object properties list by single insert", he);
+            logger.info("Returning to basic insert method");
+            insert(props);
+        }
     }
     //ставит значение в object_props нужному объекту
 
@@ -189,7 +223,6 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
                 break;
             }
         } catch (NumberFormatException e) {
-            //System.out.println("NumberFormatException while translating value ");
         }
         return prop;
     }
