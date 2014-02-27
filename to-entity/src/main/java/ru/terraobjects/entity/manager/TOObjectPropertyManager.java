@@ -66,7 +66,7 @@ public class TOObjectPropertyManager extends PersistanceManager<TOObjectProperty
     }
 
     public void createDeafultPropsForObject(Integer templateId, Integer objectId) {
-        session.createSQLQuery(DAOConsts.CREATE_PROPS_FOR_OBJECT).setParameter(0, templateId).setParameter(1, objectId).executeUpdate();
+        logger.info(session.createSQLQuery(DAOConsts.CREATE_PROPS_FOR_OBJECT).setParameter(0, templateId).setParameter(1, objectId).executeUpdate() + " updated");
     }
 
     public Object getPropertyValue(TOObject obj, TOProperty prop) {

@@ -14,6 +14,7 @@ import ru.terraobjects.entity.manager.TOPropertyManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -86,7 +87,16 @@ public class TOObjectsHelper<T> {
                     if (m.isAnnotationPresent(PropSetter.class)) {
                         //get method setter and set to retObj info from obj
                         Integer propId = Integer.valueOf(m.getAnnotation(PropSetter.class).id());
-                        m.invoke(retObj, propsManager.getPropertyValue(obj, propMngr.findById(propId)));
+                        try {
+                            Object res = propsManager.getPropertyValue(obj, propMngr.findById(propId));
+
+                            m.invoke(retObj, res);
+                        } catch (RuntimeException re) {
+                            Logger.getLogger(TOObjectsHelper.class.getName()).log(Level.SEVERE,
+                                    "Unable to set value to property  " + propId + " : can't load from db", new Object[]
+                                    {
+                                    });
+                        }
                     }
                 }
             } else {
@@ -193,7 +203,7 @@ public class TOObjectsHelper<T> {
         return objectsManager.getObjectsByPropAndPropVal(propId, val, type);
     }
 
-    public Integer countObjectsByField(Integer propId, Object val, Integer type) {
+    public BigInteger countObjectsByField(Integer propId, Object val, Integer type) {
         return objectsManager.getObjectsCountByPropAndPropVal(propId, val, type);
     }
 

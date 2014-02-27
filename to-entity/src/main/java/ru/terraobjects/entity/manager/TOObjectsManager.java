@@ -15,6 +15,7 @@ import ru.terraobjects.entity.TOObjectTemplate;
 import ru.terraobjects.entity.TOPropertyType;
 import ru.terraobjects.entity.dao.DAOConsts;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -106,11 +107,11 @@ public class TOObjectsManager extends PersistanceManager<TOObject> {
         return q.list();
     }
 
-    public Integer getObjectsCountByPropAndPropVal(Integer propId, Object val, Integer type) {
+    public BigInteger getObjectsCountByPropAndPropVal(Integer propId, Object val, Integer type) {
         String sql = DAOConsts.COUNT_OBJECTID_BY_PROP_ID_AND_PROP_VAL.replace("$TYPE$", TOPropertyType.getTypeValById(type));
         Query q = session.createSQLQuery(sql);
         q.setParameter("pid", propId);
         q.setParameter("val", val);
-        return (Integer) q.uniqueResult();
+        return (BigInteger) q.uniqueResult();
     }
 }
