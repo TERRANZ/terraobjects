@@ -1,7 +1,9 @@
 package ru.terraobjects.tests;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.log4j.BasicConfigurator;
+import org.slf4j.LoggerFactory;
 import ru.terraobjects.manager.ObjectsManager;
 
 import java.util.Date;
@@ -22,7 +24,11 @@ public class SaveObjectTest extends TestCase {
         testObject.setCreationDate(new Date());
         testObject.setSize(12345d);
         testObject.setSum(7890l);
+        LoggerFactory.getLogger(this.getClass()).info("Created: " + testObject.toString());
         ObjectsManager<TestObject> objectsManager = new ObjectsManager<>();
         objectsManager.saveOrUpdate(testObject);
+        TestObject testObject2 = objectsManager.load(TestObject.class, testObject.getId());
+        Assert.assertNotNull(testObject2);
+        LoggerFactory.getLogger(this.getClass()).info("Loaded: " + testObject2.toString());
     }
 }

@@ -58,4 +58,15 @@ public class TestObject {
     public void setSize(Double size) {
         this.size = size;
     }
+
+    @Override
+    public String toString() {
+        return "TestObject{" +
+                "size=" + size +
+                ", sum=" + sum +
+                ", creationDate=" + creationDate +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

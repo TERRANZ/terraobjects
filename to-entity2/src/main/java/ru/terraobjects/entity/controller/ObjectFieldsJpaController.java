@@ -180,6 +180,7 @@ public class ObjectFieldsJpaController implements Serializable {
             queryName += "val";
             return em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getSingleResult();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         } finally {
             em.close();

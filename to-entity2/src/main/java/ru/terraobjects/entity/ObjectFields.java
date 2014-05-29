@@ -36,12 +36,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ObjectFields.findById", query = "SELECT o FROM ObjectFields o WHERE o.id = :id"),
     @NamedQuery(name = "ObjectFields.findByName", query = "SELECT o FROM ObjectFields o WHERE o.name = :name"),
     @NamedQuery(name = "ObjectFields.findByType", query = "SELECT o FROM ObjectFields o WHERE o.type = :type"),
-    @NamedQuery(name = "ObjectFields.findByIntval", query = "SELECT o FROM ObjectFields o WHERE o.intval = :val"),
-    @NamedQuery(name = "ObjectFields.findByLongval", query = "SELECT o FROM ObjectFields o WHERE o.longval = :val"),
-    @NamedQuery(name = "ObjectFields.findByStrval", query = "SELECT o FROM ObjectFields o WHERE o.strval = :val"),
-    @NamedQuery(name = "ObjectFields.findByFloatval", query = "SELECT o FROM ObjectFields o WHERE o.floatval = :val"),
-    @NamedQuery(name = "ObjectFields.findByDateval", query = "SELECT o FROM ObjectFields o WHERE o.dateval = :val"),
-    @NamedQuery(name = "ObjectFields.findByListval", query = "SELECT o FROM ObjectFields o WHERE o.listval = :val")})
+    @NamedQuery(name = "ObjectFields.findByintval", query = "SELECT o FROM ObjectFields o WHERE o.intval = :val"),
+    @NamedQuery(name = "ObjectFields.findBylongval", query = "SELECT o FROM ObjectFields o WHERE o.longval = :val"),
+    @NamedQuery(name = "ObjectFields.findBystrval", query = "SELECT o FROM ObjectFields o WHERE o.strval = :val"),
+    @NamedQuery(name = "ObjectFields.findByfloatval", query = "SELECT o FROM ObjectFields o WHERE o.floatval = :val"),
+    @NamedQuery(name = "ObjectFields.findBydateval", query = "SELECT o FROM ObjectFields o WHERE o.dateval = :val"),
+    @NamedQuery(name = "ObjectFields.findBylistval", query = "SELECT o FROM ObjectFields o WHERE o.listval = :val")})
 public class ObjectFields implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

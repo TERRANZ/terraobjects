@@ -77,16 +77,26 @@ public class ObjectsManager<T> {
                     String fieldType = field.getType().getSimpleName().toLowerCase();
                     switch (fieldType) {
                         case "integer": {
-                            if (idFieldName.equalsIgnoreCase(field.getName()))
-                                newObjectField.setIntval(objectJpaController.getCountByName(name).intValue() + 1);
-                            else
+                            if (idFieldName.equalsIgnoreCase(field.getName())) {
+                                Integer newId = 0;
+                                if (generationType.equals(GenerationType.IDENTITY)) {
+                                    newId = objectJpaController.getCountByName(name).intValue() + 1;
+                                    newObjectField.setIntval(newId);
+                                    PropertyUtils.setSimpleProperty(entity, idFieldName, newId);
+                                }
+                            } else
                                 newObjectField.setIntval((Integer) PropertyUtils.getProperty(entity, field.getName()));
                         }
                         break;
                         case "long": {
-                            if (idFieldName.equalsIgnoreCase(field.getName()))
-                                newObjectField.setLongval(objectJpaController.getCountByName(name) + 1);
-                            else
+                            if (idFieldName.equalsIgnoreCase(field.getName())) {
+                                Long newId = 0l;
+                                if (generationType.equals(GenerationType.IDENTITY)) {
+                                    newId = objectJpaController.getCountByName(name) + 1;
+                                    newObjectField.setLongval(newId);
+                                    PropertyUtils.setSimpleProperty(entity, idFieldName, newId);
+                                }
+                            } else
                                 newObjectField.setLongval((Long) PropertyUtils.getProperty(entity, field.getName()));
                         }
                         break;
@@ -125,5 +135,55 @@ public class ObjectsManager<T> {
         if (objectField != null)
             return objectField.getTObject();
         return null;
+    }
+
+    public T load(Class<T> loadClass, Object id) {
+        T ret = null;
+        TObject object = null;
+        ObjectFields field = objectFieldsJpaController.findByValue(id.getClass().getSimpleName(), id);
+        if (field == null)
+            return null;
+        object = field.getTObject();
+        try {
+            ret = loadClass.newInstance();
+
+            for (ObjectFields of : object.getObjectFieldsList()) {
+                Object value = null;
+                switch (of.getType()) {
+                    case "integer": {
+                        value = of.getIntval();
+                    }
+                    break;
+                    case "long": {
+                        value = of.getLongval();
+                    }
+                    break;
+                    case "double": {
+                        value = of.getFloatval();
+                    }
+                    break;
+                    case "date": {
+                        value = of.getDateval();
+                    }
+                    break;
+                    case "string": {
+                        value = of.getStrval();
+                    }
+                    break;
+
+                }
+                PropertyUtils.setSimpleProperty(ret, of.getName(), value);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
     }
 }
