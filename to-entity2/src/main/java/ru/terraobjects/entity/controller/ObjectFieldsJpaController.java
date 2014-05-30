@@ -167,8 +167,9 @@ public class ObjectFieldsJpaController implements Serializable {
         }
     }
 
-    public ObjectFields findByValue(String type, Object value) {
+    public ObjectFields findByValueSingle(Object value) {
         EntityManager em = getEntityManager();
+        String type = value.getClass().getSimpleName();
         try {
             String queryName = "ObjectFields.findBy";
             if (type.equalsIgnoreCase("integer"))
@@ -187,4 +188,45 @@ public class ObjectFieldsJpaController implements Serializable {
         }
     }
 
+    public List<ObjectFields> findByValue(Object value) {
+        EntityManager em = getEntityManager();
+        String type = value.getClass().getSimpleName();
+        try {
+            String queryName = "ObjectFields.findBy";
+            if (type.equalsIgnoreCase("integer"))
+                queryName += "int";
+            else if (type.equalsIgnoreCase("string"))
+                queryName += "str";
+            else
+                queryName += type;
+            queryName += "val";
+            return em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Long getCountByValue(String field, Object value) {
+        EntityManager em = getEntityManager();
+        String type = value.getClass().getSimpleName();
+        try {
+            String queryName = "ObjectFields.findBy";
+            if (type.equalsIgnoreCase("integer"))
+                queryName += "int";
+            else if (type.equalsIgnoreCase("string"))
+                queryName += "str";
+            else
+                queryName += type;
+            queryName += "val";
+            return Long.valueOf(em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getResultList().size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }

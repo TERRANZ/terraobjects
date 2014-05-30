@@ -24,11 +24,16 @@ public class SaveObjectTest extends TestCase {
         testObject.setCreationDate(new Date());
         testObject.setSize(12345d);
         testObject.setSum(7890l);
-        LoggerFactory.getLogger(this.getClass()).info("Created: " + testObject.toString());
         ObjectsManager<TestObject> objectsManager = new ObjectsManager<>();
         objectsManager.saveOrUpdate(testObject);
+        LoggerFactory.getLogger(this.getClass()).info("Created: " + testObject.toString());
         TestObject testObject2 = objectsManager.load(TestObject.class, testObject.getId());
         Assert.assertNotNull(testObject2);
         LoggerFactory.getLogger(this.getClass()).info("Loaded: " + testObject2.toString());
+    }
+
+    public void test2() throws Exception {
+        ObjectsManager<TestObject> objectsManager = new ObjectsManager<>();
+        LoggerFactory.getLogger(this.getClass()).info("Count: " + objectsManager.getCount("test object name", "name"));
     }
 }

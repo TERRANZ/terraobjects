@@ -131,7 +131,7 @@ public class ObjectsManager<T> {
     }
 
     private TObject findById(Object id) {
-        ObjectFields objectField = objectFieldsJpaController.findByValue(id.getClass().getSimpleName(), id);
+        ObjectFields objectField = objectFieldsJpaController.findByValueSingle(id);
         if (objectField != null)
             return objectField.getTObject();
         return null;
@@ -140,7 +140,7 @@ public class ObjectsManager<T> {
     public T load(Class<T> loadClass, Object id) {
         T ret = null;
         TObject object = null;
-        ObjectFields field = objectFieldsJpaController.findByValue(id.getClass().getSimpleName(), id);
+        ObjectFields field = objectFieldsJpaController.findByValueSingle(id);
         if (field == null)
             return null;
         object = field.getTObject();
@@ -186,4 +186,10 @@ public class ObjectsManager<T> {
 
         return ret;
     }
+
+    public Long getCount(Object value, String field) {
+        return objectFieldsJpaController.getCountByValue(field, value);
+    }
+
+
 }
