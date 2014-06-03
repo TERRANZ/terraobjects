@@ -2,11 +2,10 @@ package ru.terraobjects.tests;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import org.apache.log4j.BasicConfigurator;
-import org.slf4j.LoggerFactory;
 import ru.terraobjects.manager.ObjectsManager;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * Date: 29.05.14
@@ -15,7 +14,6 @@ import java.util.Date;
 public class SaveObjectTest extends TestCase {
     public SaveObjectTest() {
         super("SaveObjectTest Tests");
-        BasicConfigurator.configure();
     }
 
     public void test1() throws Exception {
@@ -26,14 +24,13 @@ public class SaveObjectTest extends TestCase {
         testObject.setSum(7890l);
         ObjectsManager<TestObject> objectsManager = new ObjectsManager<>();
         objectsManager.saveOrUpdate(testObject);
-        LoggerFactory.getLogger(this.getClass()).info("Created: " + testObject.toString());
+
         TestObject testObject2 = objectsManager.load(TestObject.class, testObject.getId());
         Assert.assertNotNull(testObject2);
-        LoggerFactory.getLogger(this.getClass()).info("Loaded: " + testObject2.toString());
     }
 
     public void test2() throws Exception {
         ObjectsManager<TestObject> objectsManager = new ObjectsManager<>();
-        LoggerFactory.getLogger(this.getClass()).info("Count: " + objectsManager.getCount("test object name", "name"));
+        Logger.getAnonymousLogger().info(String.valueOf(objectsManager.getCount("test object name", "name")));
     }
 }

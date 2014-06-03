@@ -1,22 +1,15 @@
 package ru.terraobjects.manager;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.terraobjects.entity.ObjectFields;
 import ru.terraobjects.entity.TObject;
 import ru.terraobjects.entity.controller.ObjectFieldsJpaController;
 import ru.terraobjects.entity.controller.TObjectJpaController;
+import ru.terraobjects.entity.controller.exceptions.IllegalOrphanException;
+import ru.terraobjects.entity.controller.exceptions.NonexistentEntityException;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Date: 29.05.14
@@ -26,7 +19,6 @@ public class ObjectsManager<T> {
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("to2pu");
     private TObjectJpaController objectJpaController = new TObjectJpaController(emf);
     private ObjectFieldsJpaController objectFieldsJpaController = new ObjectFieldsJpaController(emf);
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ObjectsManager() {
     }
@@ -40,23 +32,17 @@ public class ObjectsManager<T> {
         for (Field field : entity.getClass().getDeclaredFields()) {
             if (field.getAnnotation(Id.class) != null)
                 try {
-                    id = PropertyUtils.getProperty(entity, field.getName());
+                    if (!field.isAccessible())
+                        field.setAccessible(true);
+                    id = field.get(entity);
                     idFieldName = field.getName();
-//
-// GeneratedValue genval = field.getAnnotation(GeneratedValue.class);
-//                    if (genval != null)
-//                        generationType = genval.strategy();
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
         }
 
         if (id != null)
-            object = findById(id);
+            object = findByValue(id);
 
         if (object == null) {
             object = new TObject();
@@ -82,10 +68,10 @@ public class ObjectsManager<T> {
                                 if (generationType.equals(GenerationType.IDENTITY)) {
                                     newId = objectJpaController.getCountByName(name).intValue() + 1;
                                     newObjectField.setIntval(newId);
-                                    PropertyUtils.setSimpleProperty(entity, idFieldName, newId);
+                                    field.set(entity, newId);
                                 }
                             } else
-                                newObjectField.setIntval((Integer) PropertyUtils.getProperty(entity, field.getName()));
+                                newObjectField.setIntval((Integer) field.get(entity));
                         }
                         break;
                         case "long": {
@@ -94,31 +80,27 @@ public class ObjectsManager<T> {
                                 if (generationType.equals(GenerationType.IDENTITY)) {
                                     newId = objectJpaController.getCountByName(name) + 1;
                                     newObjectField.setLongval(newId);
-                                    PropertyUtils.setSimpleProperty(entity, idFieldName, newId);
+                                    field.set(entity, newId);
                                 }
                             } else
-                                newObjectField.setLongval((Long) PropertyUtils.getProperty(entity, field.getName()));
+                                newObjectField.setLongval((Long) field.get(entity));
                         }
                         break;
                         case "double": {
-                            newObjectField.setFloatval((Double) PropertyUtils.getProperty(entity, field.getName()));
+                            newObjectField.setFloatval((Double) field.get(entity));
                         }
                         break;
                         case "date": {
-                            newObjectField.setDateval((Date) PropertyUtils.getProperty(entity, field.getName()));
+                            newObjectField.setDateval((Date) field.get(entity));
                         }
                         break;
                         case "string": {
-                            newObjectField.setStrval((String) PropertyUtils.getProperty(entity, field.getName()));
+                            newObjectField.setStrval((String) field.get(entity));
                         }
                         break;
                     }
 
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
                 objectFieldsJpaController.create(newObjectField);
@@ -130,61 +112,33 @@ public class ObjectsManager<T> {
         objectJpaController.edit(object);
     }
 
-    private TObject findById(Object id) {
-        ObjectFields objectField = objectFieldsJpaController.findByValueSingle(id);
+    private TObject findByValue(Object value) {
+        ObjectFields objectField = objectFieldsJpaController.findByValueSingle(value);
         if (objectField != null)
             return objectField.getTObject();
         return null;
     }
 
-    public T load(Class<T> loadClass, Object id) {
-        T ret = null;
-        TObject object = null;
-        ObjectFields field = objectFieldsJpaController.findByValueSingle(id);
+    public List<T> load(Class<T> loadClass, String fieldName, Object value) {
+        List<ObjectFields> fields = objectFieldsJpaController.findByObjectNameAndFieldValue(loadClass.getName(), fieldName, value);
+        if (fields == null)
+            return null;
+        List<T> ret = new ArrayList<>();
+        for (ObjectFields of : fields) {
+            ret.add(loadEntityFromObject(loadClass, of.getTObject()));
+        }
+        return ret;
+    }
+
+    public T load(Class<T> loadClass, Object value) {
+        ObjectFields field = objectFieldsJpaController.findByValueSingle(value);
         if (field == null)
             return null;
-        object = field.getTObject();
-        try {
-            ret = loadClass.newInstance();
+        return loadEntityFromObject(loadClass, field.getTObject());
+    }
 
-            for (ObjectFields of : object.getObjectFieldsList()) {
-                Object value = null;
-                switch (of.getType()) {
-                    case "integer": {
-                        value = of.getIntval();
-                    }
-                    break;
-                    case "long": {
-                        value = of.getLongval();
-                    }
-                    break;
-                    case "double": {
-                        value = of.getFloatval();
-                    }
-                    break;
-                    case "date": {
-                        value = of.getDateval();
-                    }
-                    break;
-                    case "string": {
-                        value = of.getStrval();
-                    }
-                    break;
-
-                }
-                PropertyUtils.setSimpleProperty(ret, of.getName(), value);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-
-        return ret;
+    public List<TObject> load(String name, int page, int perpage, boolean all) {
+        return objectJpaController.findByName(name);
     }
 
     public Long getCount(Object value, String field) {
@@ -192,4 +146,114 @@ public class ObjectsManager<T> {
     }
 
 
+    public void remove(T entity) {
+        Object id = null;
+        String idFieldName = "";
+        for (Field field : entity.getClass().getDeclaredFields()) {
+            if (field.getAnnotation(Id.class) != null)
+                try {
+                    if (!field.isAccessible())
+                        field.setAccessible(true);
+                    id = field.get(entity);
+                    idFieldName = field.getName();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+        }
+        TObject object = findByValue(id);
+        if (object != null)
+            try {
+                objectJpaController.destroy(object.getId());
+            } catch (IllegalOrphanException e) {
+                e.printStackTrace();
+            } catch (NonexistentEntityException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public List<T> list(Class<T> targetClass, int page, int perpage, boolean all) {
+        final List<T> ret = new ArrayList<>();
+        for (TObject tobject : objectJpaController.findByName(targetClass.getName())) {
+            ret.add(loadEntityFromObject(targetClass, tobject));
+        }
+        return ret;
+    }
+
+    private T loadEntityFromObject(Class<T> loadClass, TObject object) {
+        T ret = null;
+        try {
+            ret = loadClass.newInstance();
+
+            for (ObjectFields of : object.getObjectFieldsList()) {
+                Field f = loadClass.getDeclaredField(of.getName());
+                if (!f.isAccessible())
+                    f.setAccessible(true);
+                f.set(ret, objectFieldsJpaController.getValue(of));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    public Integer createObject(String name) {
+        TObject tObject = new TObject();
+        tObject.setId(0);
+        tObject.setParent(0);
+        tObject.setName(name);
+        tObject.setVersion(0);
+        tObject.setUpdated(new Date());
+        tObject.setObjectFieldsList(new ArrayList<>());
+        objectJpaController.create(tObject);
+        return tObject.getId();
+    }
+
+    public void updateObjectFields(Integer id, Map<String, Object> fields) throws PersistenceException {
+        TObject tObject = objectJpaController.findTObject(id);
+        if (tObject == null)
+            throw new PersistenceException("Unable to find object " + id);
+
+        for (String name : fields.keySet()) {
+            Object value = fields.get(name);
+            String fieldType = value.getClass().getSimpleName().toLowerCase();
+            ObjectFields newObjectField = new ObjectFields(0, name, fieldType);
+            newObjectField.setObjectId(tObject);
+
+            switch (fieldType) {
+                case "integer":
+                    newObjectField.setIntval((Integer) value);
+                    break;
+                case "long":
+                    newObjectField.setLongval((Long) value);
+                    break;
+                case "double":
+                    newObjectField.setFloatval((Double) value);
+                    break;
+                case "date":
+                    newObjectField.setDateval((Date) value);
+                    break;
+                case "string":
+                    newObjectField.setStrval((String) value);
+                    break;
+            }
+            objectFieldsJpaController.create(newObjectField);
+        }
+    }
+
+    public Map<String, Object> getObjectFieldValues(Integer id) throws PersistenceException {
+        TObject tObject = objectJpaController.findTObject(id);
+        if (tObject == null)
+            throw new PersistenceException("Unable to find object " + id);
+
+        Map<String, Object> ret = new HashMap<>();
+        for (ObjectFields objectField : tObject.getObjectFieldsList())
+            ret.put(objectField.getName(), objectFieldsJpaController.getValue(objectField));
+
+        return ret;
+    }
 }

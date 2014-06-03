@@ -14,7 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
@@ -181,7 +183,6 @@ public class ObjectFieldsJpaController implements Serializable {
             queryName += "val";
             return em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         } finally {
             em.close();
@@ -190,15 +191,9 @@ public class ObjectFieldsJpaController implements Serializable {
 
     public List<ObjectFields> findByValue(Object value) {
         EntityManager em = getEntityManager();
-        String type = value.getClass().getSimpleName();
         try {
             String queryName = "ObjectFields.findBy";
-            if (type.equalsIgnoreCase("integer"))
-                queryName += "int";
-            else if (type.equalsIgnoreCase("string"))
-                queryName += "str";
-            else
-                queryName += type;
+            queryName += getFieldForValue(value);
             queryName += "val";
             return em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getResultList();
         } catch (Exception e) {
@@ -208,6 +203,17 @@ public class ObjectFieldsJpaController implements Serializable {
             em.close();
         }
     }
+
+    private String getFieldForValue(Object value) {
+        String type = value.getClass().getSimpleName();
+        if (type.equalsIgnoreCase("integer"))
+            return "int";
+        else if (type.equalsIgnoreCase("string"))
+            return "str";
+        else
+            return type;
+    }
+
 
     public Long getCountByValue(String field, Object value) {
         EntityManager em = getEntityManager();
@@ -222,6 +228,43 @@ public class ObjectFieldsJpaController implements Serializable {
                 queryName += type;
             queryName += "val";
             return Long.valueOf(em.createNamedQuery(queryName, ObjectFields.class).setParameter("val", value).getResultList().size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Object getValue(ObjectFields of) {
+        switch (of.getType()) {
+            case "integer":
+                return of.getIntval();
+            case "long":
+                return of.getLongval();
+            case "double":
+                return of.getFloatval();
+            case "date":
+                return of.getDateval();
+            case "string":
+                return of.getStrval();
+        }
+        return null;
+    }
+
+    public List<ObjectFields> findByObjectNameAndFieldValue(String name, String field, Object value) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cq = cb.createQuery();
+            Root<ObjectFields> e = cq.from(ObjectFields.class);
+            Join<ObjectFields, TObject> a = e.join("objectId");
+            String fieldName = getFieldForValue(value);
+            fieldName += "val";
+            cq.select(e);
+            cq.where(cb.equal(e.get(fieldName), value), cb.equal(e.get("name"), field), cb.equal(a.get("name"), name));
+            Query query = em.createQuery(cq);
+            return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
