@@ -23,6 +23,10 @@ public class ObjectsManager<T> {
     public ObjectsManager() {
     }
 
+    public void saveObject(TObject tObject) throws Exception {
+        objectJpaController.create(tObject);
+    }
+
     public void saveOrUpdate(T entity) throws Exception {
         String name = entity.getClass().getName();
         GenerationType generationType = GenerationType.IDENTITY;
