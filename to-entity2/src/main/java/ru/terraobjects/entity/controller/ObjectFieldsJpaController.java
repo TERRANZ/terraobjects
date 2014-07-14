@@ -14,10 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -262,7 +259,10 @@ public class ObjectFieldsJpaController implements Serializable {
             String fieldName = getFieldForValue(value);
             fieldName += "val";
             cq.select(e);
-            cq.where(cb.equal(e.get(fieldName), value), cb.equal(e.get("name"), field), cb.equal(a.get("name"), name));
+            Predicate fieldNamePredicate = cb.equal(e.get(fieldName), value);
+            Predicate namePredicate = cb.equal(e.get("name"), field);
+            Predicate joinPredicate = cb.equal(a.get("name"), name);
+            cq.where(fieldNamePredicate, namePredicate, joinPredicate);
             Query query = em.createQuery(cq);
             return query.getResultList();
         } catch (Exception e) {
