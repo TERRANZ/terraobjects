@@ -55,7 +55,7 @@ public class ObjectsManager<T> {
             object.setName(name);
             object.setVersion(0);
             object.setUpdated(new Date());
-            object.setObjectFieldsList(new ArrayList<>());
+            object.setObjectFieldsList(new ArrayList<ObjectFields>());
             objectJpaController.create(object);
             final List<ObjectFields> objectFieldsList = new ArrayList<>();
             for (Field field : entity.getClass().getDeclaredFields()) {
@@ -167,9 +167,7 @@ public class ObjectsManager<T> {
 
         TObject object = objectJpaController.findTObject((Integer) id);
         if (object != null) {
-            List<ObjectFields> fields = objectFieldsJpaController.findByTObject(object);
-            if (fields != null)
-                for (ObjectFields objectFields : fields)
+            for (ObjectFields objectFields : object.getObjectFieldsList())
                 objectFieldsJpaController.destroy(objectFields.getId());
             try {
                 objectJpaController.destroy(object.getId());
@@ -219,7 +217,7 @@ public class ObjectsManager<T> {
         tObject.setName(name);
         tObject.setVersion(0);
         tObject.setUpdated(new Date());
-        tObject.setObjectFieldsList(new ArrayList<>());
+        tObject.setObjectFieldsList(new ArrayList<ObjectFields>());
         objectJpaController.create(tObject);
         return tObject.getId();
     }
