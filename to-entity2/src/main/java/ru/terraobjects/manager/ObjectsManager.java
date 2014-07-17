@@ -127,7 +127,7 @@ public class ObjectsManager<T> {
         List<ObjectFields> fields = objectFieldsJpaController.findByObjectNameAndFieldValue(loadClass.getName(), fieldName, value);
         if (fields == null)
             return null;
-        List<T> ret = new ArrayList<>();
+        List<T> ret = new ArrayList<T>();
         for (ObjectFields of : fields) {
             ret.add(loadEntityFromObject(loadClass, of.getTObject()));
         }
@@ -146,11 +146,11 @@ public class ObjectsManager<T> {
     }
 
     public Long getCount(Object value, String field) {
-        return objectFieldsJpaController.getCountByValue(field, value);
+        return objectFieldsJpaController.getCountByValue(value, field);
     }
 
 
-    public void remove(T entity) {
+    public void remove(T entity) throws NonexistentEntityException {
         Object id = null;
         String idFieldName = "";
         for (Field field : entity.getClass().getDeclaredFields()) {
@@ -164,8 +164,13 @@ public class ObjectsManager<T> {
                     e.printStackTrace();
                 }
         }
-        TObject object = findByValue(id);
-        if (object != null)
+
+        TObject object = objectJpaController.findTObject((Integer) id);
+        if (object != null) {
+            List<ObjectFields> fields = objectFieldsJpaController.findByTObject(object);
+            if (fields != null)
+                for (ObjectFields objectFields : fields)
+                objectFieldsJpaController.destroy(objectFields.getId());
             try {
                 objectJpaController.destroy(object.getId());
             } catch (IllegalOrphanException e) {
@@ -173,6 +178,8 @@ public class ObjectsManager<T> {
             } catch (NonexistentEntityException e) {
                 e.printStackTrace();
             }
+        } else
+            throw new NonexistentEntityException("Unable to find entity by id = " + id);
     }
 
     public List<T> list(Class<T> targetClass, int page, int perpage, boolean all) {
@@ -258,6 +265,11 @@ public class ObjectsManager<T> {
         for (ObjectFields objectField : tObject.getObjectFieldsList())
             ret.put(objectField.getName(), (String) objectFieldsJpaController.getValue(objectField));
 
+        return ret;
+    }
+
+    public TObject findById(Integer id) {
+        TObject ret = objectJpaController.findTObject(id);
         return ret;
     }
 }

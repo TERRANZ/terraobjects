@@ -212,7 +212,7 @@ public class ObjectFieldsJpaController implements Serializable {
     }
 
 
-    public Long getCountByValue(String field, Object value) {
+    public Long getCountByValue(Object value, String field) {
         EntityManager em = getEntityManager();
         String type = value.getClass().getSimpleName();
         try {
@@ -272,4 +272,18 @@ public class ObjectFieldsJpaController implements Serializable {
             em.close();
         }
     }
+
+    public List<ObjectFields> findByTObject(TObject tObject) {
+        EntityManager em = getEntityManager();
+        try {
+            em.createNamedQuery("ObjectFields.findByObjectId", ObjectFields.class).setParameter("object", tObject).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+        return null;
+    }
+
 }

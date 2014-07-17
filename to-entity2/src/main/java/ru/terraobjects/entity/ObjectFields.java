@@ -6,42 +6,30 @@
 
 package ru.terraobjects.entity;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- *
  * @author terranz
  */
 @Entity
 @Table(name = "object_fields", catalog = "to2", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ObjectFields.findAll", query = "SELECT o FROM ObjectFields o"),
-    @NamedQuery(name = "ObjectFields.findById", query = "SELECT o FROM ObjectFields o WHERE o.id = :id"),
-    @NamedQuery(name = "ObjectFields.findByName", query = "SELECT o FROM ObjectFields o WHERE o.name = :name"),
-    @NamedQuery(name = "ObjectFields.findByType", query = "SELECT o FROM ObjectFields o WHERE o.type = :type"),
-    @NamedQuery(name = "ObjectFields.findByintval", query = "SELECT o FROM ObjectFields o WHERE o.intval = :val"),
-    @NamedQuery(name = "ObjectFields.findBylongval", query = "SELECT o FROM ObjectFields o WHERE o.longval = :val"),
-    @NamedQuery(name = "ObjectFields.findBystrval", query = "SELECT o FROM ObjectFields o WHERE o.strval = :val"),
-    @NamedQuery(name = "ObjectFields.findByfloatval", query = "SELECT o FROM ObjectFields o WHERE o.floatval = :val"),
-    @NamedQuery(name = "ObjectFields.findBydateval", query = "SELECT o FROM ObjectFields o WHERE o.dateval = :val"),
-    @NamedQuery(name = "ObjectFields.findBylistval", query = "SELECT o FROM ObjectFields o WHERE o.listval = :val")})
+        @NamedQuery(name = "ObjectFields.findAll", query = "SELECT o FROM ObjectFields o"),
+        @NamedQuery(name = "ObjectFields.findById", query = "SELECT o FROM ObjectFields o WHERE o.id = :id"),
+        @NamedQuery(name = "ObjectFields.findByName", query = "SELECT o FROM ObjectFields o WHERE o.name = :name"),
+        @NamedQuery(name = "ObjectFields.findByType", query = "SELECT o FROM ObjectFields o WHERE o.type = :type"),
+        @NamedQuery(name = "ObjectFields.findByintval", query = "SELECT o FROM ObjectFields o WHERE o.intval = :val"),
+        @NamedQuery(name = "ObjectFields.findBylongval", query = "SELECT o FROM ObjectFields o WHERE o.longval = :val"),
+        @NamedQuery(name = "ObjectFields.findBystrval", query = "SELECT o FROM ObjectFields o WHERE o.strval = :val"),
+        @NamedQuery(name = "ObjectFields.findByfloatval", query = "SELECT o FROM ObjectFields o WHERE o.floatval = :val"),
+        @NamedQuery(name = "ObjectFields.findBydateval", query = "SELECT o FROM ObjectFields o WHERE o.dateval = :val"),
+        @NamedQuery(name = "ObjectFields.findBylistval", query = "SELECT o FROM ObjectFields o WHERE o.listval = :val"),
+        @NamedQuery(name = "ObjectFields.findByObjectId", query = "SELECT o FROM ObjectFields o WHERE o.objectId = :object")
+})
 public class ObjectFields implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -187,5 +175,5 @@ public class ObjectFields implements Serializable {
     public String toString() {
         return "ru.terraobjects.entity.ObjectFields[ id=" + id + " ]";
     }
-    
+
 }
