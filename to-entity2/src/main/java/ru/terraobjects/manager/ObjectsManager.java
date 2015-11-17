@@ -231,6 +231,7 @@ public class ObjectsManager<T> {
         if (tObject == null)
             throw new PersistenceException("Unable to find object " + id);
 
+        List<ObjectFields> newObjectFields = new ArrayList<>();
         for (String name : fields.keySet()) {
             Object value = fields.get(name);
             String fieldType = value.getClass().getSimpleName().toLowerCase();
@@ -254,8 +255,10 @@ public class ObjectsManager<T> {
                     newObjectField.setStrval((String) value);
                     break;
             }
-            objectFieldsJpaController.create(newObjectField);
+//            objectFieldsJpaController.create(newObjectField);
+            newObjectFields.add(newObjectField);
         }
+        objectFieldsJpaController.createAll(newObjectFields);
     }
 
     public Map<String, String> getObjectFieldValues(Integer id) throws PersistenceException {

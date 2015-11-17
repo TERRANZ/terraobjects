@@ -56,6 +56,31 @@ public class ObjectFieldsJpaController implements Serializable {
         }
     }
 
+    public void createAll(List<ObjectFields> objectFieldses) {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            for (ObjectFields objectFields : objectFieldses) {
+                TObject objectId = objectFields.getTObject();
+                if (objectId != null) {
+                    objectId = em.getReference(objectId.getClass(), objectId.getId());
+                    objectFields.setObjectId(objectId);
+                }
+                em.persist(objectFields);
+                if (objectId != null) {
+                    objectId.getObjectFieldsList().add(objectFields);
+                    objectId = em.merge(objectId);
+                }
+            }
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
     public void edit(ObjectFields objectFields) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
