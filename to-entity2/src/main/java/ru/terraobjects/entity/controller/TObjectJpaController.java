@@ -234,4 +234,19 @@ public class TObjectJpaController implements Serializable {
             em.close();
         }
     }
+
+    public List<TObject> findByParent(Integer parent) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cq = cb.createQuery();
+            Root<TObject> rt = cq.from(TObject.class);
+            cq.select(rt);
+            cq.where(cb.equal(rt.get("parent"), parent));
+            Query q = em.createQuery(cq);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

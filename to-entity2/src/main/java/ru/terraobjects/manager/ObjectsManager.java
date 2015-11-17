@@ -145,6 +145,10 @@ public class ObjectsManager<T> {
         return objectJpaController.findByName(name);
     }
 
+    public List<TObject> load(Integer parent, int page, int perpage, boolean all) {
+        return objectJpaController.findByParent(parent);
+    }
+
     public Long getCount(Object value, String field) {
         return objectFieldsJpaController.getCountByValue(value, field);
     }
@@ -222,7 +226,7 @@ public class ObjectsManager<T> {
         return tObject.getId();
     }
 
-    public void updateObjectFields(Integer id, Map<String, String> fields) throws PersistenceException {
+    public void updateObjectFields(Integer id, Map<String, Object> fields) throws PersistenceException {
         TObject tObject = objectJpaController.findTObject(id);
         if (tObject == null)
             throw new PersistenceException("Unable to find object " + id);
