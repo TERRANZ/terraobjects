@@ -269,7 +269,6 @@ public class ObjectsManager<T> {
         Map<String, String> ret = new HashMap<>();
         for (ObjectFields objectField : tObject.getObjectFieldsList())
             ret.put(objectField.getName(), objectFieldsJpaController.getValue(objectField).toString());
-
         return ret;
     }
 
