@@ -23,7 +23,7 @@ public class ObjectsManager<T> {
     public ObjectsManager() {
     }
 
-    public void saveObject(TObject tObject) throws Exception {
+    public void saveNewObject(TObject tObject) throws Exception {
         objectJpaController.create(tObject);
     }
 
@@ -259,6 +259,16 @@ public class ObjectsManager<T> {
             newObjectFields.add(newObjectField);
         }
         objectFieldsJpaController.createAll(newObjectFields);
+        tObject.setVersion(tObject.getVersion() + 1);
+        tObject.setUpdated(new Date());
+        tObject.setObjectFieldsList(newObjectFields);
+
+        try {
+            objectJpaController.edit(tObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PersistenceException(e.getMessage());
+        }
     }
 
     public Map<String, String> getObjectFieldValues(Integer id) throws PersistenceException {

@@ -69,7 +69,7 @@ public class TObjectJpaController implements Serializable {
         }
     }
 
-    public void edit(TObject TObject) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(TObject TObject) throws Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
