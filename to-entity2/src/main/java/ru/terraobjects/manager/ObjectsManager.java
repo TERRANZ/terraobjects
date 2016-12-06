@@ -142,11 +142,11 @@ public class ObjectsManager<T> {
     }
 
     public List<TObject> load(String name, int page, int perpage, boolean all) {
-        return objectJpaController.findByName(name);
+        return objectJpaController.findByName(name, page, perpage, all);
     }
 
     public List<TObject> load(Integer parent, int page, int perpage, boolean all) {
-        return objectJpaController.findByParent(parent);
+        return objectJpaController.findByParent(parent, page, perpage, all);
     }
 
     public Long getCount(Object value, String field) {
@@ -186,7 +186,7 @@ public class ObjectsManager<T> {
 
     public List<T> list(Class<T> targetClass, int page, int perpage, boolean all) {
         final List<T> ret = new ArrayList<>();
-        for (TObject tobject : objectJpaController.findByName(targetClass.getName())) {
+        for (TObject tobject : objectJpaController.findByName(targetClass.getName(), page, perpage, all)) {
             ret.add(loadEntityFromObject(targetClass, tobject));
         }
         return ret;
@@ -285,5 +285,13 @@ public class ObjectsManager<T> {
     public TObject findById(Integer id) {
         TObject ret = objectJpaController.findTObject(id);
         return ret;
+    }
+
+    public Long getCountByName(String name) {
+        return objectJpaController.getCountByName(name);
+    }
+
+    public Long getCountByParent(Integer parent) {
+        return objectJpaController.getCountByParent(parent);
     }
 }

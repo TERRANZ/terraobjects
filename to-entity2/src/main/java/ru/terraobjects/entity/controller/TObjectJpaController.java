@@ -219,8 +219,23 @@ public class TObjectJpaController implements Serializable {
         }
     }
 
+    public Long getCountByParent(Integer parent) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cq = cb.createQuery();
+            Root<TObject> rt = cq.from(TObject.class);
+            cq.select(em.getCriteriaBuilder().count(rt));
+            cq.where(cb.equal(rt.get("parent"), parent));
+            Query q = em.createQuery(cq);
+            return (Long) q.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
 
-    public List<TObject> findByName(String name) {
+
+    public List<TObject> findByName(String name, int page, int perpage, boolean all) {
         EntityManager em = getEntityManager();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -229,13 +244,17 @@ public class TObjectJpaController implements Serializable {
             cq.select(rt);
             cq.where(cb.equal(rt.get("name"), name));
             Query q = em.createQuery(cq);
+            if (!all) {
+                q.setFirstResult(page * perpage);
+                q.setMaxResults(perpage);
+            }
             return q.getResultList();
         } finally {
             em.close();
         }
     }
 
-    public List<TObject> findByParent(Integer parent) {
+    public List<TObject> findByParent(Integer parent, int page, int perpage, boolean all) {
         EntityManager em = getEntityManager();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -244,6 +263,10 @@ public class TObjectJpaController implements Serializable {
             cq.select(rt);
             cq.where(cb.equal(rt.get("parent"), parent));
             Query q = em.createQuery(cq);
+            if (!all) {
+                q.setFirstResult(page * perpage);
+                q.setMaxResults(perpage);
+            }
             return q.getResultList();
         } finally {
             em.close();
