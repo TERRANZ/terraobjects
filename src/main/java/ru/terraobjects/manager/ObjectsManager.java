@@ -55,7 +55,7 @@ public class ObjectsManager<T> {
             object.setName(name);
             object.setVersion(0);
             object.setUpdated(new Date());
-            object.setObjectFieldsList(new ArrayList<ObjectFields>());
+            object.setObjectFieldsList(new ArrayList<>());
             objectJpaController.create(object);
             final List<ObjectFields> objectFieldsList = new ArrayList<>();
             for (Field field : entity.getClass().getDeclaredFields()) {
@@ -134,6 +134,17 @@ public class ObjectsManager<T> {
         return ret;
     }
 
+    public List<TObject> load(String name, String fieldName, Object value) {
+        List<ObjectFields> fields = objectFieldsJpaController.findByObjectNameAndFieldValue(name, fieldName, value);
+        if (fields == null)
+            return null;
+        List<TObject> ret = new ArrayList<>();
+        for (ObjectFields of : fields) {
+            ret.add(of.getTObject());
+        }
+        return ret;
+    }
+
     public T load(Class<T> loadClass, Object value) {
         ObjectFields field = objectFieldsJpaController.findByValueSingle(value);
         if (field == null)
@@ -175,9 +186,7 @@ public class ObjectsManager<T> {
                 objectFieldsJpaController.destroy(objectFields.getId());
             try {
                 objectJpaController.destroy(object.getId());
-            } catch (IllegalOrphanException e) {
-                e.printStackTrace();
-            } catch (NonexistentEntityException e) {
+            } catch (IllegalOrphanException | NonexistentEntityException e) {
                 e.printStackTrace();
             }
         } else
@@ -203,11 +212,7 @@ public class ObjectsManager<T> {
                     f.setAccessible(true);
                 f.set(ret, objectFieldsJpaController.getValue(of));
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | InstantiationException | NoSuchFieldException e) {
             e.printStackTrace();
         }
 
@@ -221,7 +226,7 @@ public class ObjectsManager<T> {
         tObject.setName(name);
         tObject.setVersion(0);
         tObject.setUpdated(new Date());
-        tObject.setObjectFieldsList(new ArrayList<ObjectFields>());
+        tObject.setObjectFieldsList(new ArrayList<>());
         objectJpaController.create(tObject);
         return tObject.getId();
     }
@@ -255,7 +260,6 @@ public class ObjectsManager<T> {
                     newObjectField.setStrval((String) value);
                     break;
             }
-//            objectFieldsJpaController.create(newObjectField);
             newObjectFields.add(newObjectField);
         }
         objectFieldsJpaController.createAll(newObjectFields);
