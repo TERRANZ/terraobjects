@@ -275,12 +275,12 @@ public class ObjectsManager<T> {
         }
     }
 
-    public Map<String, String> getObjectFieldValues(Integer id) throws PersistenceException {
+    public Map<String, Object> getObjectFieldValues(Integer id) throws PersistenceException {
         TObject tObject = objectJpaController.findTObject(id);
         if (tObject == null)
             throw new PersistenceException("Unable to find object " + id);
 
-        Map<String, String> ret = new HashMap<>();
+        Map<String, Object> ret = new HashMap<>();
         for (ObjectFields objectField : tObject.getObjectFieldsList())
             ret.put(objectField.getName(), objectFieldsJpaController.getValue(objectField).toString());
         return ret;
