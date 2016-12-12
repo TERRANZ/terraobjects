@@ -298,4 +298,12 @@ public class ObjectsManager<T> {
     public Long getCountByParent(Integer parent) {
         return objectJpaController.getCountByParent(parent);
     }
+
+    public void saveTObject(TObject object) throws Exception {
+        object.setVersion(object.getVersion() + 1);
+        for (ObjectFields of : object.getObjectFieldsList())
+            objectFieldsJpaController.edit(of);
+        objectJpaController.edit(object);
+    }
+
 }
