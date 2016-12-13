@@ -305,5 +305,4 @@ public class ObjectsManager<T> {
             objectFieldsJpaController.edit(of);
         objectJpaController.edit(object);
     }
-
 }
